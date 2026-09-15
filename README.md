@@ -29,7 +29,7 @@
 
 **Open Volar S** brings the original **AVerTV Volar S (A865R)** to a modern Rust-based software stack: a userspace driver, source-built firmware, diagnostic tools, and **Live TV!**, a native Windows television application.
 
-Watch broadcasts in a dedicated viewing window, control playback from a hardware-inspired receiver panel, record the original transport stream, browse programme information, and tune the image and audio path without relying on a browser-based UI.
+Watch broadcasts in a dedicated viewing window, control playback from a hardware-inspired receiver panel, record the original transport stream, browse program information, and tune the image and audio path without relying on a browser-based UI.
 
 ## Interface
 
@@ -49,7 +49,7 @@ The receiver panel combines channel information, transport controls, direct acce
   <img src="images/screenshots/live-tv-window.png" alt="Live TV viewing window with playback, recording, channel, volume, guide, snapshot and fullscreen controls" width="1000">
 </p>
 
-The viewing window keeps playback, recording, channel selection, volume, snapshots, the programme guide, audio controls, and fullscreen access directly beneath the video surface.
+The viewing window keeps playback, recording, channel selection, volume, snapshots, the program guide, audio controls, and fullscreen access directly beneath the video surface.
 
 ## Features
 
@@ -59,7 +59,7 @@ The viewing window keeps playback, recording, channel selection, volume, snapsho
 | **Vulkan Video playback** | Hardware-accelerated H.264 decoding through Vulkan Video where supported, with a selectable Microsoft decoder as an alternative backend. |
 | **Picture controls** | Deinterlacing, scaling, aspect-ratio controls, picture adjustments, and ICC color-profile support. |
 | **Recording and time shift** | Preserve the original broadcast transport stream; pause, seek, and step through a growing recording, or open a saved `.ts` file. |
-| **Guide and captions** | Electronic programme guide and supported ISDB closed captions using information supplied by the broadcaster. |
+| **Guide and captions** | Electronic program guide and supported ISDB closed captions using information supplied by the broadcaster. |
 | **Audio controls** | Broadcast track selection, stereo/mono/left/right modes, and 5.1 output when supported by the broadcast and Windows audio configuration. |
 | **Open tuner stack** | Rust receiver API, command-line utilities, Debug Desk, source-built firmware loaded into device RAM, and experimental BDA compatibility adapters. |
 
