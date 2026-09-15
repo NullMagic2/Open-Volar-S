@@ -1,0 +1,1616 @@
+{
+  "General": [
+    "General",
+    "Geral",
+    "General",
+    "Γενικά"
+  ],
+  "Language": [
+    "Language",
+    "Idioma",
+    "Idioma",
+    "Γλώσσα"
+  ],
+  "Settings": [
+    "Settings",
+    "Configurações",
+    "Configuración",
+    "Ρυθμίσεις"
+  ],
+  "Video": [
+    "Video",
+    "Vídeo",
+    "Vídeo",
+    "Βίντεο"
+  ],
+  "Channels": [
+    "Channels",
+    "Canais",
+    "Canales",
+    "Κανάλια"
+  ],
+  "Storage": [
+    "Storage",
+    "Armazenamento",
+    "Almacenamiento",
+    "Αποθήκευση"
+  ],
+  "Appearance": [
+    "Appearance",
+    "Aparência",
+    "Apariencia",
+    "Εμφάνιση"
+  ],
+  "Picture": [
+    "Picture",
+    "Imagem",
+    "Imagen",
+    "Εικόνα"
+  ],
+  "Parental": [
+    "Parental",
+    "Controle parental",
+    "Control parental",
+    "Γονικός έλεγχος"
+  ],
+  "Apply": [
+    "Apply",
+    "Aplicar",
+    "Aplicar",
+    "Εφαρμογή"
+  ],
+  "Reset defaults": [
+    "Reset defaults",
+    "Restaurar padrões",
+    "Restablecer valores",
+    "Επαναφορά"
+  ],
+  "Close": [
+    "Close",
+    "Fechar",
+    "Cerrar",
+    "Κλείσιμο"
+  ],
+  "Close settings": [
+    "Close settings",
+    "Fechar configurações",
+    "Cerrar configuración",
+    "Κλείσιμο ρυθμίσεων"
+  ],
+  "Close panel": [
+    "Close panel",
+    "Fechar painel",
+    "Cerrar panel",
+    "Κλείσιμο πίνακα"
+  ],
+  "Minimize": [
+    "Minimize",
+    "Minimizar",
+    "Minimizar",
+    "Ελαχιστοποίηση"
+  ],
+  "Minimize panel": [
+    "Minimize panel",
+    "Minimizar painel",
+    "Minimizar panel",
+    "Ελαχιστοποίηση πίνακα"
+  ],
+  "Maximize / restore": [
+    "Maximize / restore",
+    "Maximizar / restaurar",
+    "Maximizar / restaurar",
+    "Μεγιστοποίηση / επαναφορά"
+  ],
+  "Settings categories": [
+    "Settings categories",
+    "Categorias de configurações",
+    "Categorías de configuración",
+    "Κατηγορίες ρυθμίσεων"
+  ],
+  "Live TV! — Settings": [
+    "Live TV! — Settings",
+    "Live TV! — Configurações",
+    "Live TV! — Configuración",
+    "Live TV! — Ρυθμίσεις"
+  ],
+  "Live TV! — Control Panel": [
+    "Live TV! — Control Panel",
+    "Live TV! — Painel de controle",
+    "Live TV! — Panel de control",
+    "Live TV! — Πίνακας ελέγχου"
+  ],
+  "Live TV! — Program guide": [
+    "Live TV! — Program guide",
+    "Live TV! — Guia de programação",
+    "Live TV! — Guía de programación",
+    "Live TV! — Οδηγός προγράμματος"
+  ],
+  "Output size": [
+    "Output size",
+    "Resolução de saída",
+    "Resolución de salida",
+    "Ανάλυση εξόδου"
+  ],
+  "Aspect ratio": [
+    "Aspect ratio",
+    "Proporção da imagem",
+    "Relación de aspecto",
+    "Αναλογία εικόνας"
+  ],
+  "Processing": [
+    "Processing",
+    "Processamento",
+    "Procesamiento",
+    "Επεξεργασία"
+  ],
+  "Deinterlacing": [
+    "Deinterlacing",
+    "Desentrelaçamento",
+    "Desentrelazado",
+    "Αποδιαπλοκή"
+  ],
+  "Color profile": [
+    "Color profile",
+    "Perfil de cor",
+    "Perfil de color",
+    "Χρωματικό προφίλ"
+  ],
+  "Monitor ICC": [
+    "Monitor ICC",
+    "ICC do monitor",
+    "ICC del monitor",
+    "ICC οθόνης"
+  ],
+  "Choose ICC…": [
+    "Choose ICC…",
+    "Escolher ICC…",
+    "Elegir ICC…",
+    "Επιλογή ICC…"
+  ],
+  "Choose folder…": [
+    "Choose folder…",
+    "Escolher pasta…",
+    "Elegir carpeta…",
+    "Επιλογή φακέλου…"
+  ],
+  "Choose FFmpeg…": [
+    "Choose FFmpeg…",
+    "Escolher FFmpeg…",
+    "Elegir FFmpeg…",
+    "Επιλογή FFmpeg…"
+  ],
+  "Native • no enlargement": [
+    "Native • no enlargement",
+    "Nativa • sem ampliação",
+    "Nativa • sin ampliación",
+    "Εγγενής • χωρίς μεγέθυνση"
+  ],
+  "2K • up to 2560 × 1440": [
+    "2K • up to 2560 × 1440",
+    "2K • até 2560 × 1440",
+    "2K • hasta 2560 × 1440",
+    "2K • έως 2560 × 1440"
+  ],
+  "4K • up to 3840 × 2160": [
+    "4K • up to 3840 × 2160",
+    "4K • até 3840 × 2160",
+    "4K • hasta 3840 × 2160",
+    "4K • έως 3840 × 2160"
+  ],
+  "Smooth • 50 / 59.94 fields per second": [
+    "Smooth • 50 / 59.94 fields per second",
+    "Suave • 50 / 59,94 campos por segundo",
+    "Suave • 50 / 59,94 campos por segundo",
+    "Ομαλή • 50 / 59,94 πεδία ανά δευτερόλεπτο"
+  ],
+  "Standard • single rate": [
+    "Standard • single rate",
+    "Padrão • taxa simples",
+    "Estándar • tasa simple",
+    "Τυπική • μονός ρυθμός"
+  ],
+  "Off": [
+    "Off",
+    "Desligado",
+    "Desactivado",
+    "Ανενεργό"
+  ],
+  "On": [
+    "On",
+    "Ligado",
+    "Activado",
+    "Ενεργό"
+  ],
+  "Auto": [
+    "Auto",
+    "Automático",
+    "Automático",
+    "Αυτόματο"
+  ],
+  "Vulkan GPU": [
+    "Vulkan GPU",
+    "GPU Vulkan",
+    "GPU Vulkan",
+    "GPU Vulkan"
+  ],
+  "Country": [
+    "Country",
+    "País",
+    "País",
+    "Χώρα"
+  ],
+  "Country / scan profile": [
+    "Country / scan profile",
+    "País / perfil de busca",
+    "País / perfil de búsqueda",
+    "Χώρα / προφίλ σάρωσης"
+  ],
+  "Save country": [
+    "Save country",
+    "Salvar país",
+    "Guardar país",
+    "Αποθήκευση χώρας"
+  ],
+  "Discover channels": [
+    "Discover channels",
+    "Buscar canais",
+    "Buscar canales",
+    "Αναζήτηση καναλιών"
+  ],
+  "Scan TV": [
+    "Scan TV",
+    "Buscar canais",
+    "Buscar canales",
+    "Σάρωση καναλιών"
+  ],
+  "Stop scan": [
+    "Stop scan",
+    "Parar busca",
+    "Detener búsqueda",
+    "Διακοπή σάρωσης"
+  ],
+  "From (MHz)": [
+    "From (MHz)",
+    "De (MHz)",
+    "Desde (MHz)",
+    "Από (MHz)"
+  ],
+  "To (MHz)": [
+    "To (MHz)",
+    "Até (MHz)",
+    "Hasta (MHz)",
+    "Έως (MHz)"
+  ],
+  "Step (MHz)": [
+    "Step (MHz)",
+    "Passo (MHz)",
+    "Paso (MHz)",
+    "Βήμα (MHz)"
+  ],
+  "Recording folder": [
+    "Recording folder",
+    "Pasta de gravações",
+    "Carpeta de grabaciones",
+    "Φάκελος εγγραφών"
+  ],
+  "Snapshot folder": [
+    "Snapshot folder",
+    "Pasta de capturas",
+    "Carpeta de capturas",
+    "Φάκελος στιγμιοτύπων"
+  ],
+  "Recordings are saved as TS. Snapshots are saved as PNG.": [
+    "Recordings are saved as TS. Snapshots are saved as PNG.",
+    "Gravações são salvas em TS. Capturas são salvas em PNG.",
+    "Las grabaciones se guardan en TS. Las capturas, en PNG.",
+    "Οι εγγραφές αποθηκεύονται σε TS. Τα στιγμιότυπα σε PNG."
+  ],
+  "Main theme": [
+    "Main theme",
+    "Tema principal",
+    "Tema principal",
+    "Κύριο θέμα"
+  ],
+  "Button variation": [
+    "Button variation",
+    "Material dos botões",
+    "Material de los botones",
+    "Υλικό κουμπιών"
+  ],
+  "Metal": [
+    "Metal",
+    "Metal",
+    "Metal",
+    "Μέταλλο"
+  ],
+  "Glass": [
+    "Glass",
+    "Vidro",
+    "Vidrio",
+    "Γυαλί"
+  ],
+  "Plastic": [
+    "Plastic",
+    "Plástico",
+    "Plástico",
+    "Πλαστικό"
+  ],
+  "Appearance changes apply immediately.": [
+    "Appearance changes apply immediately.",
+    "As alterações de aparência são aplicadas imediatamente.",
+    "Los cambios de apariencia se aplican al instante.",
+    "Οι αλλαγές εμφάνισης εφαρμόζονται αμέσως."
+  ],
+  "Coffee metal, burnished clay, and warm glass.": [
+    "Coffee metal, burnished clay, and warm glass.",
+    "Metal café, argila polida e vidro em tons quentes.",
+    "Metal café, arcilla pulida y vidrio en tonos cálidos.",
+    "Μέταλλο καφέ, γυαλισμένος πηλός και γυαλί σε ζεστούς τόνους."
+  ],
+  "Video HDR": [
+    "Video HDR",
+    "HDR do vídeo",
+    "HDR del vídeo",
+    "HDR βίντεο"
+  ],
+  "Video HDR: Off": [
+    "Video HDR: Off",
+    "HDR do vídeo: desligado",
+    "HDR del vídeo: desactivado",
+    "HDR βίντεο: ανενεργό"
+  ],
+  "Video HDR: On": [
+    "Video HDR: On",
+    "HDR do vídeo: ligado",
+    "HDR del vídeo: activado",
+    "HDR βίντεο: ενεργό"
+  ],
+  "Video HDR needs Windows HDR already enabled on this display.": [
+    "Video HDR needs Windows HDR already enabled on this display.",
+    "O HDR do Windows precisa estar ativado nesta tela para usar o HDR do vídeo.",
+    "El HDR de Windows debe estar activado en esta pantalla para usar el HDR del vídeo.",
+    "Το HDR των Windows πρέπει να είναι ήδη ενεργό σε αυτή την οθόνη."
+  ],
+  "Video HDR requires the Vulkan renderer.": [
+    "Video HDR requires the Vulkan renderer.",
+    "O HDR do vídeo requer o renderizador Vulkan.",
+    "El HDR del vídeo requiere el renderizador Vulkan.",
+    "Το HDR βίντεο απαιτεί απόδοση Vulkan."
+  ],
+  "Video preset": [
+    "Video preset",
+    "Predefinição de vídeo",
+    "Preajuste de vídeo",
+    "Προρύθμιση βίντεο"
+  ],
+  "Neutral": [
+    "Neutral",
+    "Neutro",
+    "Neutro",
+    "Ουδέτερο"
+  ],
+  "Cold": [
+    "Cold",
+    "Frio",
+    "Frío",
+    "Ψυχρό"
+  ],
+  "Vivid": [
+    "Vivid",
+    "Vívido",
+    "Vívido",
+    "Ζωντανό"
+  ],
+  "Custom": [
+    "Custom",
+    "Personalizado",
+    "Personalizado",
+    "Προσαρμοσμένο"
+  ],
+  "Saturation": [
+    "Saturation",
+    "Saturação",
+    "Saturación",
+    "Κορεσμός"
+  ],
+  "Brightness": [
+    "Brightness",
+    "Brilho",
+    "Brillo",
+    "Φωτεινότητα"
+  ],
+  "Contrast": [
+    "Contrast",
+    "Contraste",
+    "Contraste",
+    "Αντίθεση"
+  ],
+  "Saturation {}%": [
+    "Saturation {}%",
+    "Saturação {}%",
+    "Saturación {}%",
+    "Κορεσμός {}%"
+  ],
+  "Brightness {}": [
+    "Brightness {}",
+    "Brilho {}",
+    "Brillo {}",
+    "Φωτεινότητα {}"
+  ],
+  "Contrast {}%": [
+    "Contrast {}%",
+    "Contraste {}%",
+    "Contraste {}%",
+    "Αντίθεση {}%"
+  ],
+  "Password": [
+    "Password",
+    "Senha",
+    "Contraseña",
+    "Κωδικός"
+  ],
+  "New password": [
+    "New password",
+    "Nova senha",
+    "Nueva contraseña",
+    "Νέος κωδικός"
+  ],
+  "Confirm": [
+    "Confirm",
+    "Confirmar",
+    "Confirmar",
+    "Επιβεβαίωση"
+  ],
+  "Unlock": [
+    "Unlock",
+    "Desbloquear",
+    "Desbloquear",
+    "Ξεκλείδωμα"
+  ],
+  "TV blocking": [
+    "TV blocking",
+    "Bloqueio de TV",
+    "Bloqueo de TV",
+    "Φραγή TV"
+  ],
+  "Block unrated": [
+    "Block unrated",
+    "Bloquear sem classificação",
+    "Bloquear sin clasificación",
+    "Φραγή χωρίς σήμανση"
+  ],
+  "Maximum age": [
+    "Maximum age",
+    "Idade máxima",
+    "Edad máxima",
+    "Μέγιστη ηλικία"
+  ],
+  "Channel": [
+    "Channel",
+    "Canal",
+    "Canal",
+    "Κανάλι"
+  ],
+  "Lock / unlock": [
+    "Lock / unlock",
+    "Bloquear / desbloquear",
+    "Bloquear / desbloquear",
+    "Κλείδωμα / ξεκλείδωμα"
+  ],
+  "Save controls": [
+    "Save controls",
+    "Salvar controle parental",
+    "Guardar control parental",
+    "Αποθήκευση ελέγχου"
+  ],
+  "Livre": [
+    "Livre",
+    "Livre",
+    "Todos los públicos",
+    "Κατάλληλο για όλους"
+  ],
+  "Enter your password to edit or temporarily unlock.": [
+    "Enter your password to edit or temporarily unlock.",
+    "Digite sua senha para editar ou desbloquear temporariamente.",
+    "Introduce tu contraseña para editar o desbloquear temporalmente.",
+    "Εισαγάγετε τον κωδικό για επεξεργασία ή προσωρινό ξεκλείδωμα."
+  ],
+  "Incorrect password.": [
+    "Incorrect password.",
+    "Senha incorreta.",
+    "Contraseña incorrecta.",
+    "Λανθασμένος κωδικός."
+  ],
+  "Passwords do not match.": [
+    "Passwords do not match.",
+    "As senhas não coincidem.",
+    "Las contraseñas no coinciden.",
+    "Οι κωδικοί δεν ταιριάζουν."
+  ],
+  "Set and confirm a password first.": [
+    "Set and confirm a password first.",
+    "Defina e confirme uma senha primeiro.",
+    "Primero establece y confirma una contraseña.",
+    "Ορίστε και επιβεβαιώστε πρώτα έναν κωδικό."
+  ],
+  "Use a password of 4–128 characters.": [
+    "Use a password of 4–128 characters.",
+    "Use uma senha de 4 a 128 caracteres.",
+    "Usa una contraseña de 4 a 128 caracteres.",
+    "Χρησιμοποιήστε κωδικό 4–128 χαρακτήρων."
+  ],
+  "Parental controls saved.": [
+    "Parental controls saved.",
+    "Controle parental salvo.",
+    "Control parental guardado.",
+    "Ο γονικός έλεγχος αποθηκεύτηκε."
+  ],
+  "Parental controls saved. Select a channel to continue.": [
+    "Parental controls saved. Select a channel to continue.",
+    "Controle parental salvo. Selecione um canal para continuar.",
+    "Control parental guardado. Selecciona un canal para continuar.",
+    "Ο γονικός έλεγχος αποθηκεύτηκε. Επιλέξτε κανάλι για συνέχεια."
+  ],
+  "Parental controls: this program is blocked. Unlock in Settings > Parental.": [
+    "Parental controls: this program is blocked. Unlock in Settings > Parental.",
+    "Controle parental: programa bloqueado. Desbloqueie em Configurações > Controle parental.",
+    "Control parental: programa bloqueado. Desbloquéalo en Configuración > Control parental.",
+    "Γονικός έλεγχος: το πρόγραμμα έχει αποκλειστεί. Ξεκλειδώστε το στις Ρυθμίσεις > Γονικός έλεγχος."
+  ],
+  "Parental controls: unlock in Settings > Parental to open a recording.": [
+    "Parental controls: unlock in Settings > Parental to open a recording.",
+    "Controle parental: desbloqueie em Configurações > Controle parental para abrir uma gravação.",
+    "Control parental: desbloquea en Configuración > Control parental para abrir una grabación.",
+    "Γονικός έλεγχος: ξεκλειδώστε στις Ρυθμίσεις > Γονικός έλεγχος για να ανοίξετε εγγραφή."
+  ],
+  "[Locked] {}": [
+    "[Locked] {}",
+    "[Bloqueado] {}",
+    "[Bloqueado] {}",
+    "[Κλειδωμένο] {}"
+  ],
+  "Ready": [
+    "Ready",
+    "Pronto",
+    "Listo",
+    "Έτοιμο"
+  ],
+  "Live": [
+    "Live",
+    "Ao vivo",
+    "En vivo",
+    "Ζωντανά"
+  ],
+  "Recording": [
+    "Recording",
+    "Gravando",
+    "Grabando",
+    "Εγγραφή"
+  ],
+  "Saved recording": [
+    "Saved recording",
+    "Gravação salva",
+    "Grabación guardada",
+    "Αποθηκευμένη εγγραφή"
+  ],
+  "Play": [
+    "Play",
+    "Reproduzir",
+    "Reproducir",
+    "Αναπαραγωγή"
+  ],
+  "Pause": [
+    "Pause",
+    "Pausar",
+    "Pausar",
+    "Παύση"
+  ],
+  "Stop": [
+    "Stop",
+    "Parar",
+    "Detener",
+    "Διακοπή"
+  ],
+  "Previous frame": [
+    "Previous frame",
+    "Quadro anterior",
+    "Fotograma anterior",
+    "Προηγούμενο καρέ"
+  ],
+  "Next frame": [
+    "Next frame",
+    "Próximo quadro",
+    "Fotograma siguiente",
+    "Επόμενο καρέ"
+  ],
+  "Stream position": [
+    "Stream position",
+    "Posição da reprodução",
+    "Posición de reproducción",
+    "Θέση αναπαραγωγής"
+  ],
+  "Volume": [
+    "Volume",
+    "Volume",
+    "Volumen",
+    "Ένταση"
+  ],
+  "Volume dial": [
+    "Volume dial",
+    "Controle de volume",
+    "Control de volumen",
+    "Ρυθμιστής έντασης"
+  ],
+  "Volume: {} percent": [
+    "Volume: {} percent",
+    "Volume: {} por cento",
+    "Volumen: {} por ciento",
+    "Ένταση: {} τοις εκατό"
+  ],
+  "Audio": [
+    "Audio",
+    "Áudio",
+    "Audio",
+    "Ήχος"
+  ],
+  "Audio tracks and mode": [
+    "Audio tracks and mode",
+    "Faixas e modo de áudio",
+    "Pistas y modo de audio",
+    "Κομμάτια και λειτουργία ήχου"
+  ],
+  "Closed captions": [
+    "Closed captions",
+    "Legendas",
+    "Subtítulos",
+    "Υπότιτλοι"
+  ],
+  "CC On": [
+    "CC On",
+    "Legendas ligadas",
+    "Subtítulos activados",
+    "Υπότιτλοι ενεργοί"
+  ],
+  "CC Off": [
+    "CC Off",
+    "Legendas desligadas",
+    "Subtítulos desactivados",
+    "Υπότιτλοι ανενεργοί"
+  ],
+  "Receiver panel": [
+    "Receiver panel",
+    "Painel do receptor",
+    "Panel del receptor",
+    "Πίνακας δέκτη"
+  ],
+  "Fullscreen": [
+    "Fullscreen",
+    "Tela cheia",
+    "Pantalla completa",
+    "Πλήρης οθόνη"
+  ],
+  "Snapshot": [
+    "Snapshot",
+    "Captura",
+    "Captura",
+    "Στιγμιότυπο"
+  ],
+  "EPG": [
+    "EPG",
+    "Guia",
+    "Guía",
+    "Οδηγός"
+  ],
+  "Guide": [
+    "Guide",
+    "Guia",
+    "Guía",
+    "Οδηγός"
+  ],
+  "Library": [
+    "Library",
+    "Biblioteca",
+    "Biblioteca",
+    "Βιβλιοθήκη"
+  ],
+  "Open": [
+    "Open",
+    "Abrir",
+    "Abrir",
+    "Άνοιγμα"
+  ],
+  "Open media…": [
+    "Open media…",
+    "Abrir mídia…",
+    "Abrir archivo…",
+    "Άνοιγμα πολυμέσων…"
+  ],
+  "Preferences…": [
+    "Preferences…",
+    "Preferências…",
+    "Preferencias…",
+    "Προτιμήσεις…"
+  ],
+  "REC": [
+    "REC",
+    "GRAV",
+    "GRAB",
+    "ΕΓΓΡ"
+  ],
+  "REC ON": [
+    "REC ON",
+    "GRAVANDO",
+    "GRABANDO",
+    "ΕΓΓΡΑΦΗ"
+  ],
+  "RECORDING PLAYBACK": [
+    "RECORDING PLAYBACK",
+    "REPRODUZINDO GRAVAÇÃO",
+    "REPRODUCIENDO GRABACIÓN",
+    "ΑΝΑΠΑΡΑΓΩΓΗ ΕΓΓΡΑΦΗΣ"
+  ],
+  "SCANNING CHANNELS": [
+    "SCANNING CHANNELS",
+    "BUSCANDO CANAIS",
+    "BUSCANDO CANALES",
+    "ΣΑΡΩΣΗ ΚΑΝΑΛΙΩΝ"
+  ],
+  "+ TIME SHIFT": [
+    "+ TIME SHIFT",
+    "+ REPRODUÇÃO DIFERIDA",
+    "+ REPRODUCCIÓN DIFERIDA",
+    "+ ΧΡΟΝΟΜΕΤΑΤΟΠΙΣΗ"
+  ],
+  "{} s BEHIND LIVE": [
+    "{} s BEHIND LIVE",
+    "{} s ATRÁS DO AO VIVO",
+    "{} s DETRÁS DEL DIRECTO",
+    "{} s ΠΙΣΩ ΑΠΟ ΤΟ ΖΩΝΤΑΝΟ"
+  ],
+  "SIGNAL QUALITY: {}%": [
+    "SIGNAL QUALITY: {}%",
+    "QUALIDADE DO SINAL: {}%",
+    "CALIDAD DE SEÑAL: {}%",
+    "ΠΟΙΟΤΗΤΑ ΣΗΜΑΤΟΣ: {}%"
+  ],
+  "SIGNAL QUALITY: —": [
+    "SIGNAL QUALITY: —",
+    "QUALIDADE DO SINAL: —",
+    "CALIDAD DE SEÑAL: —",
+    "ΠΟΙΟΤΗΤΑ ΣΗΜΑΤΟΣ: —"
+  ],
+  "Signal quality: {}": [
+    "Signal quality: {}",
+    "Qualidade do sinal: {}",
+    "Calidad de señal: {}",
+    "Ποιότητα σήματος: {}"
+  ],
+  "Left channel": [
+    "Left channel",
+    "Canal esquerdo",
+    "Canal izquierdo",
+    "Αριστερό κανάλι"
+  ],
+  "Right channel": [
+    "Right channel",
+    "Canal direito",
+    "Canal derecho",
+    "Δεξί κανάλι"
+  ],
+  "Stereo": [
+    "Stereo",
+    "Estéreo",
+    "Estéreo",
+    "Στερεοφωνικός"
+  ],
+  "Mono": [
+    "Mono",
+    "Mono",
+    "Mono",
+    "Μονοφωνικός"
+  ],
+  "5.1 surround": [
+    "5.1 surround",
+    "Surround 5.1",
+    "Envolvente 5.1",
+    "Περιβάλλων 5.1"
+  ],
+  "Broadcast: 5.1 surround": [
+    "Broadcast: 5.1 surround",
+    "Transmissão: surround 5.1",
+    "Emisión: envolvente 5.1",
+    "Εκπομπή: περιβάλλων 5.1"
+  ],
+  "Broadcast: stereo": [
+    "Broadcast: stereo",
+    "Transmissão: estéreo",
+    "Emisión: estéreo",
+    "Εκπομπή: στερεοφωνική"
+  ],
+  "Broadcast: mono": [
+    "Broadcast: mono",
+    "Transmissão: mono",
+    "Emisión: mono",
+    "Εκπομπή: μονοφωνική"
+  ],
+  "Broadcast: {} channels": [
+    "Broadcast: {} channels",
+    "Transmissão: {} canais",
+    "Emisión: {} canales",
+    "Εκπομπή: {} κανάλια"
+  ],
+  "Waiting for broadcast audio tracks…": [
+    "Waiting for broadcast audio tracks…",
+    "Aguardando faixas de áudio da transmissão…",
+    "Esperando pistas de audio de la emisión…",
+    "Αναμονή για κομμάτια ήχου εκπομπής…"
+  ],
+  "{} — track {}": [
+    "{} — track {}",
+    "{} — faixa {}",
+    "{} — pista {}",
+    "{} — κομμάτι {}"
+  ],
+  " (unsupported codec)": [
+    " (unsupported codec)",
+    " (codec não suportado)",
+    " (códec no compatible)",
+    " (μη υποστηριζόμενος κωδικοποιητής)"
+  ],
+  "Program guide": [
+    "Program guide",
+    "Guia de programação",
+    "Guía de programación",
+    "Οδηγός προγράμματος"
+  ],
+  "Close program guide": [
+    "Close program guide",
+    "Fechar guia de programação",
+    "Cerrar guía de programación",
+    "Κλείσιμο οδηγού προγράμματος"
+  ],
+  "All received channels": [
+    "All received channels",
+    "Todos os canais recebidos",
+    "Todos los canales recibidos",
+    "Όλα τα ληφθέντα κανάλια"
+  ],
+  "Program": [
+    "Program",
+    "Programa",
+    "Programa",
+    "Πρόγραμμα"
+  ],
+  "Programs": [
+    "Programs",
+    "Programas",
+    "Programas",
+    "Προγράμματα"
+  ],
+  "No description supplied by the broadcaster.": [
+    "No description supplied by the broadcaster.",
+    "A emissora não forneceu uma descrição.",
+    "La emisora no ha proporcionado una descripción.",
+    "Δεν δόθηκε περιγραφή από τον σταθμό."
+  ],
+  "No guide received yet. Keep watching a channel to receive its programs.": [
+    "No guide received yet. Keep watching a channel to receive its programs.",
+    "Nenhum guia recebido. Continue assistindo para receber a programação.",
+    "Aún no se ha recibido la guía. Sigue viendo un canal para recibir su programación.",
+    "Δεν έχει ληφθεί οδηγός. Συνεχίστε την προβολή για να λάβετε το πρόγραμμα."
+  ],
+  "Program title not provided": [
+    "Program title not provided",
+    "Título do programa não informado",
+    "Título del programa no disponible",
+    "Δεν δόθηκε τίτλος προγράμματος"
+  ],
+  "Times as broadcast • Guide updates while watching": [
+    "Times as broadcast • Guide updates while watching",
+    "Horários da emissora • Guia atualizado durante a transmissão",
+    "Horarios de la emisora • La guía se actualiza durante la emisión",
+    "Ώρες εκπομπής • Ο οδηγός ενημερώνεται κατά την προβολή"
+  ],
+  "Program guide is updating; try again": [
+    "Program guide is updating; try again",
+    "O guia está sendo atualizado; tente novamente",
+    "La guía se está actualizando; inténtalo de nuevo",
+    "Ο οδηγός ενημερώνεται· δοκιμάστε ξανά"
+  ],
+  "Ready - choose a channel": [
+    "Ready - choose a channel",
+    "Pronto — escolha um canal",
+    "Listo — elige un canal",
+    "Έτοιμο — επιλέξτε κανάλι"
+  ],
+  "Ready • Scan TV or open a recording.": [
+    "Ready • Scan TV or open a recording.",
+    "Pronto • Busque canais ou abra uma gravação.",
+    "Listo • Busca canales o abre una grabación.",
+    "Έτοιμο • Σαρώστε κανάλια ή ανοίξτε εγγραφή."
+  ],
+  "Ready • choose a channel or open a recording": [
+    "Ready • choose a channel or open a recording",
+    "Pronto • Escolha um canal ou abra uma gravação",
+    "Listo • Elige un canal o abre una grabación",
+    "Έτοιμο • Επιλέξτε κανάλι ή ανοίξτε εγγραφή"
+  ],
+  "Select a channel": [
+    "Select a channel",
+    "Selecione um canal",
+    "Selecciona un canal",
+    "Επιλέξτε κανάλι"
+  ],
+  "Channel {}": [
+    "Channel {}",
+    "Canal {}",
+    "Canal {}",
+    "Κανάλι {}"
+  ],
+  "Channel not found": [
+    "Channel not found",
+    "Canal não encontrado",
+    "Canal no encontrado",
+    "Το κανάλι δεν βρέθηκε"
+  ],
+  "Channel selection": [
+    "Channel selection",
+    "Seleção de canal",
+    "Selección de canal",
+    "Επιλογή καναλιού"
+  ],
+  "Stop recording or scanning first": [
+    "Stop recording or scanning first",
+    "Pare a gravação ou a busca primeiro",
+    "Detén primero la grabación o la búsqueda",
+    "Διακόψτε πρώτα την εγγραφή ή τη σάρωση"
+  ],
+  "Preparing channel scan…": [
+    "Preparing channel scan…",
+    "Preparando busca de canais…",
+    "Preparando búsqueda de canales…",
+    "Προετοιμασία σάρωσης καναλιών…"
+  ],
+  "Preparing playback": [
+    "Preparing playback",
+    "Preparando reprodução",
+    "Preparando reproducción",
+    "Προετοιμασία αναπαραγωγής"
+  ],
+  "Preparing playback…": [
+    "Preparing playback…",
+    "Preparando reprodução…",
+    "Preparando reproducción…",
+    "Προετοιμασία αναπαραγωγής…"
+  ],
+  "Scanning channels": [
+    "Scanning channels",
+    "Buscando canais",
+    "Buscando canales",
+    "Σάρωση καναλιών"
+  ],
+  "Stopping playback…": [
+    "Stopping playback…",
+    "Parando reprodução…",
+    "Deteniendo reproducción…",
+    "Διακοπή αναπαραγωγής…"
+  ],
+  "Tuner unavailable": [
+    "Tuner unavailable",
+    "Sintonizador indisponível",
+    "Sintonizador no disponible",
+    "Ο δέκτης δεν είναι διαθέσιμος"
+  ],
+  "Playing • recovered using Windows rendering": [
+    "Playing • recovered using Windows rendering",
+    "Reproduzindo • recuperado com renderização do Windows",
+    "Reproduciendo • recuperado con renderizado de Windows",
+    "Αναπαραγωγή • ανάκτηση μέσω απόδοσης Windows"
+  ],
+  "Playback recovered • Windows rendering": [
+    "Playback recovered • Windows rendering",
+    "Reprodução recuperada • renderização do Windows",
+    "Reproducción recuperada • renderizado de Windows",
+    "Ανάκτηση αναπαραγωγής • απόδοση Windows"
+  ],
+  "Playback worker ended unexpectedly. See session logs.": [
+    "Playback worker ended unexpectedly. See session logs.",
+    "A reprodução terminou inesperadamente. Consulte os registros da sessão.",
+    "La reproducción terminó inesperadamente. Consulta los registros de la sesión.",
+    "Η αναπαραγωγή τερματίστηκε απροσδόκητα. Δείτε τα αρχεία καταγραφής."
+  ],
+  "Saved recording: {}": [
+    "Saved recording: {}",
+    "Gravação salva: {}",
+    "Grabación guardada: {}",
+    "Αποθηκευμένη εγγραφή: {}"
+  ],
+  "Saving snapshot…": [
+    "Saving snapshot…",
+    "Salvando captura…",
+    "Guardando captura…",
+    "Αποθήκευση στιγμιοτύπου…"
+  ],
+  "Snapshot saved: {}": [
+    "Snapshot saved: {}",
+    "Captura salva: {}",
+    "Captura guardada: {}",
+    "Το στιγμιότυπο αποθηκεύτηκε: {}"
+  ],
+  "Snapshot failed: {}": [
+    "Snapshot failed: {}",
+    "Falha na captura: {}",
+    "Error al capturar: {}",
+    "Αποτυχία στιγμιοτύπου: {}"
+  ],
+  "Snapshot unavailable: no image was returned.": [
+    "Snapshot unavailable: no image was returned.",
+    "Captura indisponível: nenhuma imagem retornada.",
+    "Captura no disponible: no se obtuvo ninguna imagen.",
+    "Το στιγμιότυπο δεν είναι διαθέσιμο: δεν επιστράφηκε εικόνα."
+  ],
+  "Snapshot unavailable: playback has stopped.": [
+    "Snapshot unavailable: playback has stopped.",
+    "Captura indisponível: a reprodução parou.",
+    "Captura no disponible: la reproducción se detuvo.",
+    "Το στιγμιότυπο δεν είναι διαθέσιμο: η αναπαραγωγή σταμάτησε."
+  ],
+  "Play a channel or recording before taking a snapshot.": [
+    "Play a channel or recording before taking a snapshot.",
+    "Reproduza um canal ou gravação antes de capturar a imagem.",
+    "Reproduce un canal o una grabación antes de capturar la imagen.",
+    "Αναπαράγετε κανάλι ή εγγραφή πριν τη λήψη στιγμιοτύπου."
+  ],
+  "Choose a folder, not a file.": [
+    "Choose a folder, not a file.",
+    "Escolha uma pasta, não um arquivo.",
+    "Elige una carpeta, no un archivo.",
+    "Επιλέξτε φάκελο, όχι αρχείο."
+  ],
+  "Enter a full folder path or choose a folder.": [
+    "Enter a full folder path or choose a folder.",
+    "Digite o caminho completo ou escolha uma pasta.",
+    "Introduce la ruta completa o elige una carpeta.",
+    "Εισαγάγετε πλήρη διαδρομή ή επιλέξτε φάκελο."
+  ],
+  "Cannot create snapshot folder: {}": [
+    "Cannot create snapshot folder: {}",
+    "Não foi possível criar a pasta de capturas: {}",
+    "No se pudo crear la carpeta de capturas: {}",
+    "Αδυναμία δημιουργίας φακέλου στιγμιοτύπων: {}"
+  ],
+  "Country profile saved.": [
+    "Country profile saved.",
+    "Perfil do país salvo.",
+    "Perfil del país guardado.",
+    "Το προφίλ χώρας αποθηκεύτηκε."
+  ],
+  "Enter a country name (up to 80 characters).": [
+    "Enter a country name (up to 80 characters).",
+    "Digite o nome de um país (até 80 caracteres).",
+    "Introduce el nombre de un país (hasta 80 caracteres).",
+    "Εισαγάγετε όνομα χώρας (έως 80 χαρακτήρες)."
+  ],
+  "Enter valid frequencies in MHz.": [
+    "Enter valid frequencies in MHz.",
+    "Digite frequências válidas em MHz.",
+    "Introduce frecuencias válidas en MHz.",
+    "Εισαγάγετε έγκυρες συχνότητες σε MHz."
+  ],
+  "Enter frequencies in MHz, such as 473.143": [
+    "Enter frequencies in MHz, such as 473.143",
+    "Digite frequências em MHz, como 473.143",
+    "Introduce frecuencias en MHz, como 473.143",
+    "Εισαγάγετε συχνότητες σε MHz, όπως 473.143"
+  ],
+  "Enter a frequency between 470 and 697.999 MHz": [
+    "Enter a frequency between 470 and 697.999 MHz",
+    "Digite uma frequência entre 470 e 697.999 MHz",
+    "Introduce una frecuencia entre 470 y 697.999 MHz",
+    "Εισαγάγετε συχνότητα μεταξύ 470 και 697.999 MHz"
+  ],
+  "{} channels saved{}": [
+    "{} channels saved{}",
+    "{} canais salvos{}",
+    "{} canales guardados{}",
+    "{} κανάλια αποθηκεύτηκαν{}"
+  ],
+  " • scan stopped": [
+    " • scan stopped",
+    " • busca interrompida",
+    " • búsqueda detenida",
+    " • η σάρωση σταμάτησε"
+  ],
+  "Could not start Live TV!: {}": [
+    "Could not start Live TV!: {}",
+    "Não foi possível iniciar o Live TV!: {}",
+    "No se pudo iniciar Live TV!: {}",
+    "Αδυναμία εκκίνησης του Live TV!: {}"
+  ],
+  "Caption display: {}": [
+    "Caption display: {}",
+    "Exibição de legendas: {}",
+    "Visualización de subtítulos: {}",
+    "Εμφάνιση υποτίτλων: {}"
+  ],
+  "Brazil": [
+    "Brazil",
+    "Brasil",
+    "Brasil",
+    "Βραζιλία"
+  ],
+  "Argentina": [
+    "Argentina",
+    "Argentina",
+    "Argentina",
+    "Αργεντινή"
+  ],
+  "Bolivia": [
+    "Bolivia",
+    "Bolívia",
+    "Bolivia",
+    "Βολιβία"
+  ],
+  "Chile": [
+    "Chile",
+    "Chile",
+    "Chile",
+    "Χιλή"
+  ],
+  "Costa Rica": [
+    "Costa Rica",
+    "Costa Rica",
+    "Costa Rica",
+    "Κόστα Ρίκα"
+  ],
+  "Ecuador": [
+    "Ecuador",
+    "Equador",
+    "Ecuador",
+    "Ισημερινός"
+  ],
+  "El Salvador": [
+    "El Salvador",
+    "El Salvador",
+    "El Salvador",
+    "Ελ Σαλβαδόρ"
+  ],
+  "Guatemala": [
+    "Guatemala",
+    "Guatemala",
+    "Guatemala",
+    "Γουατεμάλα"
+  ],
+  "Honduras": [
+    "Honduras",
+    "Honduras",
+    "Honduras",
+    "Ονδούρα"
+  ],
+  "Nicaragua": [
+    "Nicaragua",
+    "Nicarágua",
+    "Nicaragua",
+    "Νικαράγουα"
+  ],
+  "Paraguay": [
+    "Paraguay",
+    "Paraguai",
+    "Paraguay",
+    "Παραγουάη"
+  ],
+  "Peru": [
+    "Peru",
+    "Peru",
+    "Perú",
+    "Περού"
+  ],
+  "United States": [
+    "United States",
+    "Estados Unidos",
+    "Estados Unidos",
+    "Ηνωμένες Πολιτείες"
+  ],
+  "Uruguay": [
+    "Uruguay",
+    "Uruguai",
+    "Uruguay",
+    "Ουρουγουάη"
+  ],
+  "Venezuela": [
+    "Venezuela",
+    "Venezuela",
+    "Venezuela",
+    "Βενεζουέλα"
+  ],
+  "This country": [
+    "This country",
+    "Este país",
+    "Este país",
+    "Αυτή η χώρα"
+  ],
+  "another TV standard": [
+    "another TV standard",
+    "outro padrão de TV",
+    "otro estándar de TV",
+    "άλλο τηλεοπτικό πρότυπο"
+  ],
+  "{} uses {}. This ISDB-T tuner cannot receive it.": [
+    "{} uses {}. This ISDB-T tuner cannot receive it.",
+    "{} usa {}. Este sintonizador ISDB-T não pode recebê-lo.",
+    "{} usa {}. Este sintonizador ISDB-T no puede recibirlo.",
+    "{} χρησιμοποιεί {}. Αυτός ο δέκτης ISDB-T δεν μπορεί να το λάβει."
+  ],
+  "Ⅱ Pause": [
+    "Ⅱ Pause",
+    "Ⅱ Pausar",
+    "Ⅱ Pausar",
+    "Ⅱ Παύση"
+  ],
+  "■ Stop": [
+    "■ Stop",
+    "■ Parar",
+    "■ Detener",
+    "■ Διακοπή"
+  ],
+  "▶ Play": [
+    "▶ Play",
+    "▶ Reproduzir",
+    "▶ Reproducir",
+    "▶ Αναπαραγωγή"
+  ],
+  "● Live": [
+    "● Live",
+    "● Ao vivo",
+    "● En vivo",
+    "● Ζωντανά"
+  ],
+  "⚙ Settings": [
+    "⚙ Settings",
+    "⚙ Configurações",
+    "⚙ Configuración",
+    "⚙ Ρυθμίσεις"
+  ],
+  "● REC": [
+    "● REC",
+    "● GRAV",
+    "● GRAB",
+    "● ΕΓΓΡ"
+  ],
+  "CH +": [
+    "CH +",
+    "CH +",
+    "CH +",
+    "CH +"
+  ],
+  "CH −": [
+    "CH −",
+    "CH −",
+    "CH −",
+    "CH −"
+  ],
+  "VOL +": [
+    "VOL +",
+    "VOL +",
+    "VOL +",
+    "VOL +"
+  ],
+  "VOL −": [
+    "VOL −",
+    "VOL −",
+    "VOL −",
+    "VOL −"
+  ],
+  "Volume {}%": [
+    "Volume {}%",
+    "Volume {}%",
+    "Volumen {}%",
+    "Ένταση {}%"
+  ],
+  "Frame stepping requires the Vulkan renderer.": [
+    "Frame stepping requires the Vulkan renderer.",
+    "A navegação quadro a quadro requer o renderizador Vulkan.",
+    "El avance por fotogramas requiere el renderizador Vulkan.",
+    "Η μετακίνηση ανά καρέ απαιτεί απόδοση Vulkan."
+  ],
+  "No earlier buffered frame is available.": [
+    "No earlier buffered frame is available.",
+    "Não há quadro anterior disponível no buffer.",
+    "No hay ningún fotograma anterior disponible en el búfer.",
+    "Δεν υπάρχει προηγούμενο καρέ στην προσωρινή μνήμη."
+  ],
+  "Picture adjustments require the Vulkan renderer; Windows recovery output is neutral.": [
+    "Picture adjustments require the Vulkan renderer; Windows recovery output is neutral.",
+    "Os ajustes de imagem requerem Vulkan; a saída de recuperação do Windows é neutra.",
+    "Los ajustes de imagen requieren Vulkan; la salida de recuperación de Windows es neutra.",
+    "Οι ρυθμίσεις εικόνας απαιτούν Vulkan· η έξοδος ανάκτησης Windows είναι ουδέτερη."
+  ],
+  "Playing • Vulkan decoding and presentation": [
+    "Playing • Vulkan decoding and presentation",
+    "Reproduzindo • decodificação e apresentação Vulkan",
+    "Reproduciendo • decodificación y presentación Vulkan",
+    "Αναπαραγωγή • αποκωδικοποίηση και παρουσίαση Vulkan"
+  ],
+  "Vulkan recovery failed. Playback stopped: {}": [
+    "Vulkan recovery failed. Playback stopped: {}",
+    "A recuperação do Vulkan falhou. Reprodução interrompida: {}",
+    "La recuperación de Vulkan falló. Reproducción detenida: {}",
+    "Η ανάκτηση Vulkan απέτυχε. Η αναπαραγωγή διακόπηκε: {}"
+  ],
+  "Playing • native Windows decoding and GPU presentation": [
+    "Playing • native Windows decoding and GPU presentation",
+    "Reproduzindo • decodificação do Windows e apresentação pela GPU",
+    "Reproduciendo • decodificación de Windows y presentación por GPU",
+    "Αναπαραγωγή • αποκωδικοποίηση Windows και παρουσίαση GPU"
+  ],
+  "Reading broadcast TV services…": [
+    "Reading broadcast TV services…",
+    "Lendo serviços de TV da transmissão…",
+    "Leyendo servicios de TV de la emisión…",
+    "Ανάγνωση υπηρεσιών τηλεοπτικής εκπομπής…"
+  ],
+  "Graphics device reset — reconnecting playback…": [
+    "Graphics device reset — reconnecting playback…",
+    "Dispositivo gráfico reiniciado — reconectando reprodução…",
+    "Dispositivo gráfico reiniciado — reconectando reproducción…",
+    "Επαναφορά συσκευής γραφικών — επανασύνδεση αναπαραγωγής…"
+  ],
+  "Graphics recovery failed. Playback stopped safely: {}": [
+    "Graphics recovery failed. Playback stopped safely: {}",
+    "Falha na recuperação gráfica. Reprodução interrompida com segurança: {}",
+    "Falló la recuperación gráfica. Reproducción detenida de forma segura: {}",
+    "Η ανάκτηση γραφικών απέτυχε. Η αναπαραγωγή σταμάτησε με ασφάλεια: {}"
+  ],
+  "Native playback stopped: {}": [
+    "Native playback stopped: {}",
+    "Reprodução nativa interrompida: {}",
+    "Reproducción nativa detenida: {}",
+    "Η εγγενής αναπαραγωγή σταμάτησε: {}"
+  ],
+  "Cannot create recording folder: {}": [
+    "Cannot create recording folder: {}",
+    "Não foi possível criar a pasta de gravações: {}",
+    "No se pudo crear la carpeta de grabaciones: {}",
+    "Αδυναμία δημιουργίας φακέλου εγγραφών: {}"
+  ],
+  "Starting recording… {}": [
+    "Starting recording… {}",
+    "Iniciando gravação… {}",
+    "Iniciando grabación… {}",
+    "Έναρξη εγγραφής… {}"
+  ],
+  "Recording worker ended unexpectedly": [
+    "Recording worker ended unexpectedly",
+    "A gravação terminou inesperadamente",
+    "La grabación terminó inesperadamente",
+    "Η εγγραφή τερματίστηκε απροσδόκητα"
+  ],
+  "The selected H.264 TV service was not found. Run channel discovery to refresh the channel list.": [
+    "The selected H.264 TV service was not found. Run channel discovery to refresh the channel list.",
+    "O serviço H.264 selecionado não foi encontrado. Faça uma busca para atualizar os canais.",
+    "No se encontró el servicio H.264 seleccionado. Busca canales para actualizar la lista.",
+    "Η επιλεγμένη υπηρεσία H.264 δεν βρέθηκε. Σαρώστε για ενημέρωση της λίστας καναλιών."
+  ],
+  "Unable to start video for this service. Choose another channel or run channel discovery.": [
+    "Unable to start video for this service. Choose another channel or run channel discovery.",
+    "Não foi possível iniciar o vídeo. Escolha outro canal ou faça uma busca.",
+    "No se pudo iniciar el vídeo. Elige otro canal o busca canales.",
+    "Αδυναμία έναρξης βίντεο. Επιλέξτε άλλο κανάλι ή εκτελέστε σάρωση."
+  ],
+  "Video data arrived, but no decodable picture arrived within 30 seconds. Try this channel again.": [
+    "Video data arrived, but no decodable picture arrived within 30 seconds. Try this channel again.",
+    "Dados de vídeo recebidos, mas sem imagem decodificável em 30 segundos. Tente o canal novamente.",
+    "Se recibieron datos de vídeo, pero ninguna imagen decodificable en 30 segundos. Prueba el canal de nuevo.",
+    "Λήφθηκαν δεδομένα βίντεο χωρίς αποκωδικοποιήσιμη εικόνα εντός 30 δευτερολέπτων. Δοκιμάστε ξανά."
+  ],
+  "Invalid country frequencies": [
+    "Invalid country frequencies",
+    "Frequências do país inválidas",
+    "Frecuencias del país no válidas",
+    "Μη έγκυρες συχνότητες χώρας"
+  ],
+  "Cannot identify the player's display.": [
+    "Cannot identify the player's display.",
+    "Não foi possível identificar a tela do player.",
+    "No se pudo identificar la pantalla del reproductor.",
+    "Αδυναμία αναγνώρισης της οθόνης αναπαραγωγής."
+  ],
+  "No active display path for the player.": [
+    "No active display path for the player.",
+    "Nenhuma saída de vídeo ativa para o player.",
+    "No hay salida de pantalla activa para el reproductor.",
+    "Δεν υπάρχει ενεργή έξοδος οθόνης για το πρόγραμμα."
+  ],
+  "Display configuration is changing. Try again.": [
+    "Display configuration is changing. Try again.",
+    "A configuração da tela está mudando. Tente novamente.",
+    "La configuración de pantalla está cambiando. Inténtalo de nuevo.",
+    "Η διαμόρφωση οθόνης αλλάζει. Δοκιμάστε ξανά."
+  ],
+  "This Windows version does not expose the HDR-specific display control.": [
+    "This Windows version does not expose the HDR-specific display control.",
+    "Esta versão do Windows não disponibiliza a consulta específica de HDR.",
+    "Esta versión de Windows no ofrece la consulta específica de HDR.",
+    "Αυτή η έκδοση Windows δεν παρέχει ειδικό έλεγχο κατάστασης HDR."
+  ],
+  "Windowed": [
+    "Windowed",
+    "Em janela",
+    "En ventana",
+    "Σε παράθυρο"
+  ],
+  "All files": [
+    "All files",
+    "Todos os arquivos",
+    "Todos los archivos",
+    "Όλα τα αρχεία"
+  ],
+  "Media files": [
+    "Media files",
+    "Arquivos de mídia",
+    "Archivos multimedia",
+    "Αρχεία πολυμέσων"
+  ],
+  "PARENTAL": [
+    "PARENTAL",
+    "Parental",
+    "Parental",
+    "Γονικός"
+  ],
+  "All ages": [
+    "All ages",
+    "Livre",
+    "Para todos",
+    "Για όλους"
+  ],
+  "HDR effect: On": [
+    "HDR effect: On",
+    "Efeito HDR: ligado",
+    "Efecto HDR: activado",
+    "Εφέ HDR: ενεργό"
+  ],
+  "HDR effect: Off": [
+    "HDR effect: Off",
+    "Efeito HDR: desligado",
+    "Efecto HDR: desactivado",
+    "Εφέ HDR: ανενεργό"
+  ],
+  "HDR effect": [
+    "HDR effect",
+    "Efeito HDR",
+    "Efecto HDR",
+    "Εφέ HDR"
+  ],
+  "Start receiver with Windows": [
+    "Start receiver with Windows",
+    "Iniciar receptor com o Windows",
+    "Iniciar receptor con Windows",
+    "Εκκίνηση δέκτη με τα Windows"
+  ],
+  "Prepare the receiver without opening Live TV.": [
+    "Prepare the receiver without opening Live TV.",
+    "Preparar o receptor sem abrir o Live TV.",
+    "Preparar el receptor sin abrir Live TV.",
+    "Προετοιμασία του δέκτη χωρίς άνοιγμα του Live TV."
+  ],
+  "Could not update Windows startup.": [
+    "Could not update Windows startup.",
+    "Não foi possível atualizar a inicialização do Windows.",
+    "No se pudo actualizar el inicio de Windows.",
+    "Δεν ήταν δυνατή η ενημέρωση της εκκίνησης των Windows."
+  ],
+  "Warm": [
+    "Warm",
+    "Quente",
+    "Cálido",
+    "Θερμό"
+  ],
+  "Checking recording…": [
+    "Checking recording…",
+    "Verificando gravação…",
+    "Verificando grabación…",
+    "Έλεγχος εγγραφής…"
+  ],
+  "Repairing recording…": [
+    "Repairing recording…",
+    "Reparando gravação…",
+    "Reparando grabación…",
+    "Επιδιόρθωση εγγραφής…"
+  ],
+  "Recording ready.": [
+    "Recording ready.",
+    "Gravação pronta.",
+    "Grabación lista.",
+    "Η εγγραφή είναι έτοιμη."
+  ],
+  "AverTV signal": [
+    "AverTV signal",
+    "Sinal para o AverTV",
+    "Señal para AverTV",
+    "Σήμα για το AverTV"
+  ],
+  "Original": [
+    "Original",
+    "Original",
+    "Original",
+    "Αρχικό"
+  ],
+  "Improved": [
+    "Improved",
+    "Melhorado",
+    "Mejorado",
+    "Βελτιωμένο"
+  ],
+  "2K improved (upscaled)": [
+    "2K improved (upscaled)",
+    "2K melhorado (ampliado)",
+    "2K mejorado (ampliado)",
+    "2K βελτιωμένο (αναβάθμιση)"
+  ],
+  "4K improved (upscaled)": [
+    "4K improved (upscaled)",
+    "4K melhorado (ampliado)",
+    "4K mejorado (ampliado)",
+    "4K βελτιωμένο (αναβάθμιση)"
+  ],
+  "Saved. Applies when AverTV next tunes a channel.": [
+    "Saved. Applies when AverTV next tunes a channel.",
+    "Salvo. Aplicado na próxima sintonia do AverTV.",
+    "Guardado. Se aplica al volver a sintonizar en AverTV.",
+    "Αποθηκεύτηκε. Εφαρμόζεται στον επόμενο συντονισμό του AverTV."
+  ],
+  "Processing runs only while AverTV is receiving TV.": [
+    "Processing runs only while AverTV is receiving TV.",
+    "Processamento ativo apenas durante a recepção no AverTV.",
+    "Procesamiento activo solo mientras AverTV recibe TV.",
+    "Η επεξεργασία λειτουργεί μόνο κατά τη λήψη στο AverTV."
+  ],
+  "Microsoft processing": [
+    "Microsoft processing",
+    "Processamento Microsoft",
+    "Procesamiento Microsoft",
+    "Επεξεργασία Microsoft"
+  ],
+  "Playing • Microsoft decoding and presentation": [
+    "Playing • Microsoft decoding and presentation",
+    "Reproduzindo • decodificação e apresentação Microsoft",
+    "Reproduciendo • decodificación y presentación Microsoft",
+    "Αναπαραγωγή • αποκωδικοποίηση και παρουσίαση Microsoft"
+  ],
+  "Microsoft recovery failed. Playback stopped: {}": [
+    "Microsoft recovery failed. Playback stopped: {}",
+    "Falha na recuperação Microsoft. Reprodução interrompida: {}",
+    "Falló la recuperación de Microsoft. Reproducción detenida: {}",
+    "Η ανάκτηση Microsoft απέτυχε. Η αναπαραγωγή σταμάτησε: {}"
+  ],
+  "Themes": [
+    "Themes",
+    "Temas",
+    "Temas",
+    "Θέματα"
+  ],
+  "Decoder": [
+    "Decoder",
+    "Decodificador",
+    "Decodificador",
+    "Αποκωδικοποιητής"
+  ],
+  "Shader acceleration": [
+    "Shader acceleration",
+    "Aceleração de shaders",
+    "Aceleración de shaders",
+    "Επιτάχυνση shader"
+  ],
+  "Automatic": [
+    "Automatic",
+    "Automática",
+    "Automática",
+    "Αυτόματη"
+  ],
+  "Off (CPU)": [
+    "Off (CPU)",
+    "Desativada (CPU)",
+    "Desactivada (CPU)",
+    "Ανενεργή (CPU)"
+  ]
+}

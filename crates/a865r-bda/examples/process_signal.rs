@@ -1,0 +1,2 @@
+use std::path::PathBuf;
+fn main(){let a:Vec<_>=std::env::args().collect();if a.len()!=5{eprintln!("process_signal PRESET_0_TO_3 FFMPEG INPUT.ts OUTPUT.ts");std::process::exit(2);}let c=a865r_bda::signal::Config{mode:a[1].parse().unwrap(),ffmpeg:PathBuf::from(&a[2])};let start=std::time::Instant::now();match a865r_bda::signal::process_file(c,&PathBuf::from(&a[3]),&PathBuf::from(&a[4])){Ok(())=>println!("Completed in {:.3} seconds",start.elapsed().as_secs_f64()),Err(e)=>{eprintln!("{e}");std::process::exit(1);}}}

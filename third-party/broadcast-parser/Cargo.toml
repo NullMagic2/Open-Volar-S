@@ -1,0 +1,9 @@
+[package]
+name = "broadcast-parser"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+[dependencies]
+ash = "=0.38.0"
+[build-dependencies]
+cc = "1"

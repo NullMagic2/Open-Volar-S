@@ -1,0 +1,65 @@
+{
+  "version": "0.8.0-alpha.37",
+  "rust_tests": {
+    "player": 96,
+    "bda": 17,
+    "debug": 8
+  },
+  "rust_total_passed": 121,
+  "gpu_fixture_tests_ignored": 2,
+  "additional_regressions": [
+    "DirectWrite family-switch pixel comparison passed",
+    "lost-device retirement bounded-cleanup regression passed"
+  ],
+  "player_sha256": "864b8556791962e0e947bcc1f1dbf6054ade2ad8f143b9e6d87057148f4dd42e",
+  "adapter_sha256": {
+    "x64": "549C5444939216394F0E0F5B87D1760876A5B9B32FB2E4C543622953AD29AF24",
+    "x86": "A02711013E0E783C3296FE3470DAF6CA8F817DD04DEBBD0CF8138C79F0A3DE04"
+  },
+  "original_passthrough_byte_identical": true,
+  "processed_streams": {
+    "2k": [
+      {
+        "width": 2560,
+        "height": 1440,
+        "id": "0x1001",
+        "start_time": "37683.712733",
+        "nb_read_frames": "765"
+      },
+      {
+        "width": 2560,
+        "height": 1440,
+        "id": "0x1011",
+        "start_time": "94633.672467",
+        "duration": "50.950900",
+        "nb_read_frames": "1527"
+      }
+    ],
+    "4k": [
+      {
+        "width": 3840,
+        "height": 2160,
+        "id": "0x1001",
+        "start_time": "37683.712733",
+        "nb_read_frames": "765"
+      },
+      {
+        "width": 3840,
+        "height": 2160,
+        "id": "0x1011",
+        "start_time": "94633.672467",
+        "duration": "50.950900",
+        "nb_read_frames": "1527"
+      }
+    ]
+  },
+  "clock_wrap_cpu_decode": "passed for HD and mobile services",
+  "damaged_recording_software_repaired": true,
+  "healthy_recording_remux_without_reencoding": true,
+  "limitations": [
+    "No new live GPU-reset stress test",
+    "Native diagnostic GUI child lifecycle not exercised end-to-end",
+    "Processed AverTV rendering, including legacy decoder 4K support, not verified",
+    "No installed adapters changed during validation"
+  ]
+}

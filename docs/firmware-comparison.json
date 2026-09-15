@@ -1,0 +1,1076 @@
+{
+  "size": 5863,
+  "sha256": "4b066157d0eb1a088e55daaf339418fc6596b5f76c4583d06d5eddb3a272e921",
+  "record_count": 123,
+  "region_count": 128,
+  "record_lengths": [
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    35,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    48,
+    20
+  ],
+  "regions": [
+    {
+      "core": 0,
+      "address": 16640,
+      "length": 3,
+      "payload_offset": 13,
+      "overlaps_previous": false,
+      "reset_ljmp_target": 4799
+    },
+    {
+      "core": 0,
+      "address": 16768,
+      "length": 10,
+      "payload_offset": 16,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16787,
+      "length": 22,
+      "payload_offset": 26,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16809,
+      "length": 41,
+      "payload_offset": 55,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16850,
+      "length": 41,
+      "payload_offset": 103,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16891,
+      "length": 41,
+      "payload_offset": 151,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16932,
+      "length": 41,
+      "payload_offset": 199,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 16973,
+      "length": 41,
+      "payload_offset": 247,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 17014,
+      "length": 41,
+      "payload_offset": 295,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 17055,
+      "length": 41,
+      "payload_offset": 343,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 17096,
+      "length": 41,
+      "payload_offset": 391,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 17137,
+      "length": 41,
+      "payload_offset": 439,
+      "overlaps_previous": false
+    },
+    {
+      "core": 0,
+      "address": 17178,
+      "length": 28,
+      "payload_offset": 487,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 16640,
+      "length": 3,
+      "payload_offset": 525,
+      "overlaps_previous": false,
+      "reset_ljmp_target": 18544
+    },
+    {
+      "core": 1,
+      "address": 18176,
+      "length": 35,
+      "payload_offset": 528,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18211,
+      "length": 41,
+      "payload_offset": 570,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18252,
+      "length": 41,
+      "payload_offset": 618,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18293,
+      "length": 41,
+      "payload_offset": 666,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18334,
+      "length": 41,
+      "payload_offset": 714,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18375,
+      "length": 31,
+      "payload_offset": 765,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18544,
+      "length": 7,
+      "payload_offset": 796,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18551,
+      "length": 41,
+      "payload_offset": 810,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18592,
+      "length": 41,
+      "payload_offset": 858,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18633,
+      "length": 41,
+      "payload_offset": 906,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18674,
+      "length": 41,
+      "payload_offset": 954,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18715,
+      "length": 41,
+      "payload_offset": 1002,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18756,
+      "length": 41,
+      "payload_offset": 1050,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18797,
+      "length": 41,
+      "payload_offset": 1098,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18838,
+      "length": 41,
+      "payload_offset": 1146,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18879,
+      "length": 41,
+      "payload_offset": 1194,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18920,
+      "length": 41,
+      "payload_offset": 1242,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 18961,
+      "length": 41,
+      "payload_offset": 1290,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19002,
+      "length": 41,
+      "payload_offset": 1338,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19043,
+      "length": 41,
+      "payload_offset": 1386,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19084,
+      "length": 41,
+      "payload_offset": 1434,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19125,
+      "length": 41,
+      "payload_offset": 1482,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19166,
+      "length": 41,
+      "payload_offset": 1530,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19207,
+      "length": 41,
+      "payload_offset": 1578,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19248,
+      "length": 41,
+      "payload_offset": 1626,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19289,
+      "length": 41,
+      "payload_offset": 1674,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19330,
+      "length": 41,
+      "payload_offset": 1722,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19371,
+      "length": 41,
+      "payload_offset": 1770,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19412,
+      "length": 41,
+      "payload_offset": 1818,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19453,
+      "length": 41,
+      "payload_offset": 1866,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19494,
+      "length": 41,
+      "payload_offset": 1914,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19535,
+      "length": 41,
+      "payload_offset": 1962,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19576,
+      "length": 41,
+      "payload_offset": 2010,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19617,
+      "length": 41,
+      "payload_offset": 2058,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19658,
+      "length": 41,
+      "payload_offset": 2106,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19699,
+      "length": 41,
+      "payload_offset": 2154,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19740,
+      "length": 41,
+      "payload_offset": 2202,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19781,
+      "length": 41,
+      "payload_offset": 2250,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19822,
+      "length": 41,
+      "payload_offset": 2298,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19863,
+      "length": 41,
+      "payload_offset": 2346,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19904,
+      "length": 41,
+      "payload_offset": 2394,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19945,
+      "length": 41,
+      "payload_offset": 2442,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 19986,
+      "length": 41,
+      "payload_offset": 2490,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20027,
+      "length": 41,
+      "payload_offset": 2538,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20068,
+      "length": 41,
+      "payload_offset": 2586,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20109,
+      "length": 41,
+      "payload_offset": 2634,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20150,
+      "length": 41,
+      "payload_offset": 2682,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20191,
+      "length": 41,
+      "payload_offset": 2730,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20232,
+      "length": 41,
+      "payload_offset": 2778,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20273,
+      "length": 41,
+      "payload_offset": 2826,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20314,
+      "length": 41,
+      "payload_offset": 2874,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20355,
+      "length": 41,
+      "payload_offset": 2922,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20396,
+      "length": 41,
+      "payload_offset": 2970,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20437,
+      "length": 41,
+      "payload_offset": 3018,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20478,
+      "length": 41,
+      "payload_offset": 3066,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20519,
+      "length": 41,
+      "payload_offset": 3114,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20560,
+      "length": 41,
+      "payload_offset": 3162,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20601,
+      "length": 41,
+      "payload_offset": 3210,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20642,
+      "length": 41,
+      "payload_offset": 3258,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20683,
+      "length": 41,
+      "payload_offset": 3306,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20724,
+      "length": 41,
+      "payload_offset": 3354,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20765,
+      "length": 41,
+      "payload_offset": 3402,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20806,
+      "length": 41,
+      "payload_offset": 3450,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20847,
+      "length": 41,
+      "payload_offset": 3498,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20888,
+      "length": 41,
+      "payload_offset": 3546,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20929,
+      "length": 41,
+      "payload_offset": 3594,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 20970,
+      "length": 41,
+      "payload_offset": 3642,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21011,
+      "length": 41,
+      "payload_offset": 3690,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21052,
+      "length": 41,
+      "payload_offset": 3738,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21093,
+      "length": 41,
+      "payload_offset": 3786,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21134,
+      "length": 41,
+      "payload_offset": 3834,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21175,
+      "length": 41,
+      "payload_offset": 3882,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21216,
+      "length": 41,
+      "payload_offset": 3930,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21257,
+      "length": 41,
+      "payload_offset": 3978,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21298,
+      "length": 41,
+      "payload_offset": 4026,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21339,
+      "length": 41,
+      "payload_offset": 4074,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21380,
+      "length": 41,
+      "payload_offset": 4122,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21421,
+      "length": 41,
+      "payload_offset": 4170,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21462,
+      "length": 41,
+      "payload_offset": 4218,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21503,
+      "length": 41,
+      "payload_offset": 4266,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21544,
+      "length": 41,
+      "payload_offset": 4314,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21585,
+      "length": 41,
+      "payload_offset": 4362,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21626,
+      "length": 41,
+      "payload_offset": 4410,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21667,
+      "length": 41,
+      "payload_offset": 4458,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21708,
+      "length": 41,
+      "payload_offset": 4506,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21749,
+      "length": 41,
+      "payload_offset": 4554,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21790,
+      "length": 41,
+      "payload_offset": 4602,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21831,
+      "length": 41,
+      "payload_offset": 4650,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21872,
+      "length": 41,
+      "payload_offset": 4698,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21913,
+      "length": 41,
+      "payload_offset": 4746,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21954,
+      "length": 41,
+      "payload_offset": 4794,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 21995,
+      "length": 41,
+      "payload_offset": 4842,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22036,
+      "length": 41,
+      "payload_offset": 4890,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22077,
+      "length": 41,
+      "payload_offset": 4938,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22118,
+      "length": 41,
+      "payload_offset": 4986,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22159,
+      "length": 41,
+      "payload_offset": 5034,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22200,
+      "length": 41,
+      "payload_offset": 5082,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22241,
+      "length": 41,
+      "payload_offset": 5130,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22282,
+      "length": 41,
+      "payload_offset": 5178,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22323,
+      "length": 41,
+      "payload_offset": 5226,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22364,
+      "length": 41,
+      "payload_offset": 5274,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22405,
+      "length": 41,
+      "payload_offset": 5322,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 22446,
+      "length": 36,
+      "payload_offset": 5373,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26240,
+      "length": 2,
+      "payload_offset": 5409,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26242,
+      "length": 41,
+      "payload_offset": 5418,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26283,
+      "length": 41,
+      "payload_offset": 5466,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26324,
+      "length": 41,
+      "payload_offset": 5514,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26365,
+      "length": 41,
+      "payload_offset": 5562,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26406,
+      "length": 41,
+      "payload_offset": 5610,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26447,
+      "length": 41,
+      "payload_offset": 5658,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26488,
+      "length": 41,
+      "payload_offset": 5706,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26529,
+      "length": 41,
+      "payload_offset": 5754,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26570,
+      "length": 41,
+      "payload_offset": 5802,
+      "overlaps_previous": false
+    },
+    {
+      "core": 1,
+      "address": 26611,
+      "length": 13,
+      "payload_offset": 5850,
+      "overlaps_previous": false
+    }
+  ],
+  "ranges": [
+    {
+      "core": 0,
+      "start": 16640,
+      "end_exclusive": 16643
+    },
+    {
+      "core": 0,
+      "start": 16768,
+      "end_exclusive": 16778
+    },
+    {
+      "core": 0,
+      "start": 16787,
+      "end_exclusive": 17206
+    },
+    {
+      "core": 1,
+      "start": 16640,
+      "end_exclusive": 16643
+    },
+    {
+      "core": 1,
+      "start": 18176,
+      "end_exclusive": 18406
+    },
+    {
+      "core": 1,
+      "start": 18544,
+      "end_exclusive": 22482
+    },
+    {
+      "core": 1,
+      "start": 26240,
+      "end_exclusive": 26624
+    }
+  ],
+  "driver_name": "AVer857BDA.sys",
+  "driver_size": 146560,
+  "driver_sha256": "80dfe4cde9d5e06fc8663b68ef351404138443a0f11606caf963f038f0534b30",
+  "embedded_offset": "0x1deb0",
+  "embedded_size": 5863,
+  "byte_identical_to_driver": true,
+  "known_reference": true,
+  "evidence": "Static file analysis only; no device boot or reception test."
+}

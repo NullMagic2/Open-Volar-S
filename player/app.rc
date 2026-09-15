@@ -1,0 +1,24 @@
+201 ICON "assets/app.ico"
+
+1 VERSIONINFO
+FILEVERSION 0,8,0,43
+PRODUCTVERSION 0,8,0,43
+FILETYPE 1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "FileDescription", "Live TV! - Orbit TV receiver\0"
+      VALUE "ProductName", "Live TV!\0"
+      VALUE "CompanyName", "Open Volar S contributors\0"
+      VALUE "FileVersion", "0.8.0-alpha.43 Orbit\0"
+      VALUE "ProductVersion", "0.8.0-alpha.43 Orbit\0"
+      VALUE "OriginalFilename", "live-tv.exe\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END

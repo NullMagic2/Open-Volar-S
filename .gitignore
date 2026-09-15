@@ -1,0 +1,13 @@
+# Summary: Excludes Rust, WDK, editor, and captured transport-stream build artifacts.
+/target/
+/bda/target/
+*.pdb
+*.sys
+*.cat
+*.cer
+*.ts
+*.pcap
+*.pcapng
+*.bin
+.vs/
+.vscode/

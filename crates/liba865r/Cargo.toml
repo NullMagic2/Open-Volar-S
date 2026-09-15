@@ -1,0 +1,12 @@
+# Summary: Builds the portable Rust hardware-control library used by all A865R front ends.
+[package]
+name = "liba865r"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "a865r"
+path = "src/lib.rs"
+
+[dependencies]

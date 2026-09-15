@@ -1,0 +1,114 @@
+--- upstream/src/vulkan/swapchain/native.rs
++++ a865r/src/vulkan/swapchain/native.rs
+@@ -271,6 +271,7 @@
+             config: config.clone(),
+             acquire_semaphores,
+             next_acquire_index: 0,
++            pending_acquire: None,
+             present_semaphores,
+             next_present_time: None,
+         }))
+@@ -312,6 +313,9 @@
+     ///
+     /// [`acquire_semaphores`]: NativeSwapchain::acquire_semaphores
+     next_acquire_index: usize,
++    // A865R: retain the same acquired image across short readiness checks.
++    // No semaphore advance, second acquisition, or fence reset until ready.
++    pending_acquire: Option<(u32, bool)>,
+ 
+     /// Semaphore sets used between all submissions that write to an image and
+     /// the presentation of that image.
+@@ -352,6 +356,12 @@
+             };
+         };
+ 
++        if self.pending_acquire.take().is_some() {
++            // Resize/close must finish the retained WSI operation before its
++            // fence and semaphores can be destroyed. Device idle alone does
++            // not establish completion of an external acquire operation.
++            let _ = unsafe { device.shared.raw.wait_for_fences(&[self.fence], true, u64::MAX) };
++        }
+         unsafe { device.shared.raw.destroy_fence(self.fence, None) }
+ 
+         // We cannot take this by value, as the function returns `self`.
+@@ -401,6 +411,11 @@
+             timeout_ns = u64::MAX;
+         }
+ 
++        // wgpu-core holds the device submission-fence read lock here. Yield
++        // on Windows instead of preventing offscreen submissions for a refresh.
++        if cfg!(target_os = "windows") {
++            timeout_ns = timeout_ns.min(1_000_000);
++        }
+         let acquire_semaphore_arc = self.get_acquire_semaphore();
+         // Nothing should be using this, so we don't block, but panic if we fail to lock.
+         let acquire_semaphore_guard = acquire_semaphore_arc
+@@ -420,14 +435,19 @@
+         // thus waited for `locked_swapchain_semaphores.acquire`, wait for all
+         // of them to finish, thus ensuring that it's okay to pass `acquire` to
+         // `vkAcquireNextImageKHR` again.
+-        self.device.wait_for_fence(
++        let (index, suboptimal) = if let Some(pending) = self.pending_acquire {
++            pending
++        } else {
++        if !self.device.wait_for_fence(
+             fence,
+             acquire_semaphore_guard.previously_used_submission_index,
+             timeout_ns,
+-        )?;
++        )? {
++            return Err(crate::SurfaceError::Timeout);
++        }
+ 
+         // will block if no image is available
+-        let (index, suboptimal) = match unsafe {
++        let acquired = match unsafe {
+             profiling::scope!("vkAcquireNextImageKHR");
+             self.functor.acquire_next_image(
+                 self.raw,
+@@ -445,15 +465,18 @@
+             Err(error) => {
+                 return match error {
+                     vk::Result::TIMEOUT => Err(crate::SurfaceError::Timeout),
+-                    vk::Result::NOT_READY | vk::Result::ERROR_OUT_OF_DATE_KHR => {
+-                        Err(crate::SurfaceError::Outdated)
+-                    }
++                    vk::Result::NOT_READY => Err(crate::SurfaceError::Timeout),
++                    vk::Result::ERROR_OUT_OF_DATE_KHR => Err(crate::SurfaceError::Outdated),
+                     vk::Result::ERROR_SURFACE_LOST_KHR => Err(crate::SurfaceError::Lost),
+                     // We don't use VK_EXT_full_screen_exclusive
+                     // VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT
+                     other => Err(map_host_device_oom_and_lost_err(other).into()),
+                 };
+             }
++        };
++
++        self.pending_acquire = Some(acquired);
++        acquired
+         };
+ 
+         // Wait for the image was acquired to be fully ready to be rendered too.
+@@ -468,10 +491,11 @@
+         // acquire.
+         unsafe {
+             // The `wait_all` argument must be `true` to avoid crash on some Android devices. See https://github.com/gfx-rs/wgpu/pull/8769
+-            self.device
+-                .raw
+-                .wait_for_fences(&[self.fence], true, timeout_ns)
+-                .map_err(map_host_device_oom_and_lost_err)?;
++            match self.device.raw.wait_for_fences(&[self.fence], true, timeout_ns) {
++                Ok(()) => {},
++                Err(vk::Result::TIMEOUT) => return Err(crate::SurfaceError::Timeout),
++                Err(e) => return Err(map_host_device_oom_and_lost_err(e).into()),
++            }
+ 
+             self.device
+                 .raw
+@@ -479,6 +503,7 @@
+                 .map_err(map_host_device_oom_and_lost_err)?;
+         }
+ 
++        self.pending_acquire = None;
+         drop(acquire_semaphore_guard);
+         // We only advance the surface semaphores if we successfully acquired an image, otherwise
+         // we should try to re-acquire using the same semaphores.

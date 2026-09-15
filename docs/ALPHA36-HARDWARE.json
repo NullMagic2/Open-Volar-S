@@ -1,0 +1,252 @@
+{
+  "adapter": "AMD Radeon RX 7900 XTX",
+  "date": "2026-09-13",
+  "automated_tests": {
+    "passed": 103,
+    "failed": 0,
+    "gpu_fixture_tests_ignored": 2
+  },
+  "runs": [
+    {
+      "name": "mobile-file",
+      "started": "2026-09-13T00:53:43.5864371-03:00",
+      "duration_seconds": 16.85,
+      "pid": 4252,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 681897984.0,
+      "max_working_set": 464371712.0,
+      "max_gpu_dedicated": 709324800.0,
+      "max_gpu_shared": 242733056.0,
+      "samples": 15,
+      "executable_sha256": "E60AEECE5923DF2B972ED70D0AEFEE95AC101FA600851272807FAE69262B9CE9",
+      "version": "alpha.35",
+      "expected_reproduction": false,
+      "video": {
+        "received": 435,
+        "presented": 809,
+        "source": [
+          320,
+          180
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 0
+    },
+    {
+      "name": "hd-file",
+      "started": "2026-09-13T00:55:01.1934578-03:00",
+      "duration_seconds": 21.06,
+      "pid": 20716,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 903847936.0,
+      "max_working_set": 460369920.0,
+      "max_gpu_dedicated": 911183872.0,
+      "max_gpu_shared": 252289024.0,
+      "samples": 19,
+      "executable_sha256": "E60AEECE5923DF2B972ED70D0AEFEE95AC101FA600851272807FAE69262B9CE9",
+      "version": "alpha.35",
+      "expected_reproduction": false,
+      "video": {
+        "received": 605,
+        "presented": 1110,
+        "source": [
+          1920,
+          1080
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 0
+    },
+    {
+      "name": "mobile-record",
+      "started": "2026-09-13T00:56:25.5863487-03:00",
+      "duration_seconds": 24.32,
+      "pid": 26840,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 650219520.0,
+      "max_working_set": 424574976.0,
+      "max_gpu_dedicated": 709193728.0,
+      "max_gpu_shared": 234344448.0,
+      "samples": 22,
+      "executable_sha256": "E60AEECE5923DF2B972ED70D0AEFEE95AC101FA600851272807FAE69262B9CE9",
+      "version": "alpha.35",
+      "expected_reproduction": false,
+      "video": {
+        "received": 551,
+        "presented": 1076,
+        "source": [
+          320,
+          180
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 31594852
+    },
+    {
+      "name": "original-recording-path",
+      "started": "2026-09-13T00:57:31.1550842-03:00",
+      "duration_seconds": 24.3,
+      "pid": 25928,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 377851904.0,
+      "max_working_set": 257581056.0,
+      "max_gpu_dedicated": 67633152.0,
+      "max_gpu_shared": 528384.0,
+      "samples": 22,
+      "executable_sha256": "E60AEECE5923DF2B972ED70D0AEFEE95AC101FA600851272807FAE69262B9CE9",
+      "version": "alpha.35",
+      "expected_reproduction": true,
+      "video": {
+        "received": 0,
+        "presented": 0,
+        "source": null,
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": false,
+        "stopped": null,
+        "error": "Native playback graph stopped with an error (0x80040204)"
+      },
+      "recording_bytes": 3842292
+    },
+    {
+      "name": "original-path-fixed-alpha36",
+      "started": "2026-09-13T01:03:39.2710413-03:00",
+      "duration_seconds": 24.83,
+      "pid": 21492,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 575492096.0,
+      "max_working_set": 433905664.0,
+      "max_gpu_dedicated": 671182848.0,
+      "max_gpu_shared": 231215104.0,
+      "samples": 22,
+      "executable_sha256": "950F9DA458CA34C477FECB5D1AE9990CB0AA7E86C765354EF958F858CC04492D",
+      "version": "alpha.36",
+      "expected_reproduction": false,
+      "video": {
+        "received": 549,
+        "presented": 1073,
+        "source": [
+          320,
+          180
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 31652192
+    },
+    {
+      "name": "recording-soak-alpha36",
+      "started": "2026-09-13T01:05:31.6841596-03:00",
+      "duration_seconds": 129.51,
+      "pid": 26388,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 600436736.0,
+      "max_working_set": 458964992.0,
+      "max_gpu_dedicated": 671182848.0,
+      "max_gpu_shared": 231215104.0,
+      "samples": 114,
+      "executable_sha256": "950F9DA458CA34C477FECB5D1AE9990CB0AA7E86C765354EF958F858CC04492D",
+      "version": "alpha.36",
+      "expected_reproduction": false,
+      "video": {
+        "received": 3705,
+        "presented": 7395,
+        "source": [
+          320,
+          180
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 184233932,
+      "steady_private_min": 575479808,
+      "steady_private_max": 576151552
+    },
+    {
+      "name": "hd-seek-alpha36",
+      "started": "2026-09-13T01:08:07.7930898-03:00",
+      "duration_seconds": 15.57,
+      "pid": 23576,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 931467264.0,
+      "max_working_set": 534257664.0,
+      "max_gpu_dedicated": 978685952.0,
+      "max_gpu_shared": 243638272.0,
+      "samples": 14,
+      "executable_sha256": "950F9DA458CA34C477FECB5D1AE9990CB0AA7E86C765354EF958F858CC04492D",
+      "version": "alpha.36",
+      "expected_reproduction": false,
+      "video": {
+        "received": 148,
+        "presented": 310,
+        "source": [
+          1920,
+          1080
+        ],
+        "snapshot_error": null
+      },
+      "playback_result": {
+        "success": true,
+        "stopped": true,
+        "error": null
+      },
+      "recording_bytes": 0
+    },
+    {
+      "name": "capture-only-alpha36",
+      "started": "2026-09-13T01:09:06.0756229-03:00",
+      "duration_seconds": 12.2,
+      "pid": 28816,
+      "exit_code": 0,
+      "stop_reason": null,
+      "max_private": 2699264.0,
+      "max_working_set": 12484608.0,
+      "max_gpu_dedicated": null,
+      "max_gpu_shared": null,
+      "samples": 11,
+      "executable_sha256": "950F9DA458CA34C477FECB5D1AE9990CB0AA7E86C765354EF958F858CC04492D",
+      "version": "alpha.36",
+      "expected_reproduction": false,
+      "recording_bytes": 14564872,
+      "capture": {
+        "success": true,
+        "decoder_started": false,
+        "renderer_started": false
+      }
+    }
+  ],
+  "new_driver_faults_observed": 0,
+  "monitoring": "Per-process private/working-set and GPU dedicated/shared counters, automatic process deadlines, Application LiveKernelEvent and System display-reset checks. All test processes exited without forced termination.",
+  "limits": "These bounded runs do not establish indefinite leak freedom or prove the original driver hang cannot recur."
+}

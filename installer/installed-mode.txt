@@ -1,0 +1,2 @@
+Open Volar S — includes the Live TV! presentation application.
+Installed application. Write diagnostic exports to the running user's LOCALAPPDATA/A865R/Debug/exports, not the installation directory.

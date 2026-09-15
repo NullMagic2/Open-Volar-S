@@ -1,0 +1,30 @@
+[package]
+name = "a865r-tv"
+version = "0.8.0-alpha.43"
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "live-tv"
+path = "src/main.rs"
+
+[dependencies]
+image = { version = "=0.25.10", default-features = false, features = ["png", "bmp"] }
+liba865r = { path = "../crates/liba865r" }
+a865r-bda = { path = "../crates/a865r-bda" }
+a865r-debug = { path = "../debug", default-features = false }
+serde_json = "=1.0.151"
+wgpu = { version = "=29.0.0", default-features = false, features = ["std", "wgsl", "vulkan", "dx12"] }
+gpu-video = { path = "../third-party/gpu-video", default-features = false, features = ["wgpu", "experimental-broadcast-gpu"] }
+raw-window-handle = "=0.6.2"
+pollster = "=0.3.0"
+windows = { version = "=0.58.0", features = ["implement", "Win32_Foundation", "Win32_Devices_Display", "Win32_Graphics_Gdi", "Win32_Graphics_Dwm", "Win32_Graphics_Direct3D11", "Win32_Graphics_Direct3D", "Win32_Graphics_Direct3D_Fxc", "Win32_Graphics_Dxgi_Common", "Win32_Graphics_Dxgi", "Win32_System_Threading", "Win32_System_JobObjects", "Win32_Security", "Win32_Security_Cryptography", "Win32_Media_Audio", "Win32_Media_Audio_Endpoints", "Win32_Media_DirectShow", "Win32_Media_MediaFoundation", "Win32_System_Com", "Win32_UI_WindowsAndMessaging", "Win32_UI_Controls", "Win32_UI_Shell", "Win32_UI_Controls_Dialogs", "Win32_UI_HiDpi", "Win32_UI_ColorSystem", "Win32_UI_Input_KeyboardAndMouse", "Win32_System_LibraryLoader", "Win32_System_SystemInformation"] }
+
+
+
+[dev-dependencies]
+ash = "=0.37.3"
+naga = { version = "=29.0.4", features = ["wgsl-in"] }
+
+[build-dependencies]
+cc = "=1.4.5"

@@ -1,0 +1,22 @@
+{
+  "live-tv.exe": {
+    "approved_icon_frames": 9,
+    "sha256": "2228fa9fef8921d3969ccac45498701100c898adab60be4c75ceb114a3f31789",
+    "bytes": 12858880
+  },
+  "a865r-debug.exe": {
+    "approved_icon_frames": 9,
+    "sha256": "5e717b43b86dfdf8cf96cf33628772c119a3118638eedd110378c45c6aaf57aa",
+    "bytes": 6390272
+  },
+  "Open-Volar-S-Setup-0.8.0-alpha.33-x64.exe": {
+    "approved_icon_frames": 9,
+    "sha256": "ef2be31727068af40bd1b3959997bfe60f2ea1e56e61a547fd874541e504e55d",
+    "bytes": 47924720
+  },
+  "checks": [
+    "Approved ICO frames embedded in both applications and installer",
+    "PNG and ICO runtime assets match image folder exactly",
+    "Both SVG files contain vector paths without embedded raster data"
+  ]
+}

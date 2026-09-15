@@ -1,0 +1,2 @@
+License retrieved from upstream repository commit af96e0373c18477b77236e2bfc89735af007b1c2
+https://raw.githubusercontent.com/emilk/egui/af96e0373c18477b77236e2bfc89735af007b1c2/LICENSE-MIT

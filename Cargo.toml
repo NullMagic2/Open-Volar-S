@@ -1,0 +1,24 @@
+# Summary: Defines the Rust workspace for the user-mode A865R driver core and command-line tools.
+[workspace]
+resolver = "2"
+exclude = ["third-party/gpu-video", "third-party/h264-reader", "third-party/broadcast-parser", "third-party/wgpu-hal"]
+members = [
+    "crates/liba865r",
+    "crates/a865rctl",
+    "debug",
+    "crates/a865r-bda",
+    "player",
+]
+
+[workspace.package]
+version = "0.7.0"
+edition = "2021"
+license = "GPL-3.0-only"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[patch.crates-io]
+wgpu-hal = { path = "third-party/wgpu-hal" }

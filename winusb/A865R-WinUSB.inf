@@ -1,0 +1,36 @@
+; Summary: Development-only INF that binds the AVerMedia A865R to Microsoft's inbox WinUSB driver.
+; This intentionally replaces the original BDA binding while liba865r is being tested.
+; It is not a production-signed package.
+
+[Version]
+Signature="$Windows NT$"
+Class=USBDevice
+ClassGuid={88BAE032-5A81-49F0-BC3D-A4FF138216D6}
+Provider=%ProviderName%
+CatalogFile=A865R-WinUSB.cat
+DriverVer=07/19/2026,0.3.2.0
+
+[Manufacturer]
+%ProviderName%=DeviceList,NTamd64
+
+[DeviceList.NTamd64]
+%A865R.InterfaceDesc%=WinUSB_Install,USB\VID_07CA&PID_B865&MI_00
+
+[WinUSB_Install]
+Include=winusb.inf
+Needs=WINUSB.NT
+
+[WinUSB_Install.Services]
+Include=winusb.inf
+Needs=WINUSB.NT.Services
+
+[WinUSB_Install.HW]
+AddReg=WinUSB_AddReg
+
+[WinUSB_AddReg]
+HKR,,DeviceInterfaceGUIDs,0x10000,"{F384CE54-A804-4C22-A169-568D5CA0C540}"
+
+[Strings]
+ProviderName="A865R Open Driver Project"
+A865R.DeviceDesc="AVerMedia A865R - liba865r WinUSB Development Binding"
+A865R.InterfaceDesc="AVerMedia A865R Interface 0 - liba865r WinUSB Development Binding"

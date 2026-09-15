@@ -1,0 +1,4 @@
+https://github.com/xqq/libaribcaption
+Release: v1.1.2
+Commit: c64c23b8905ba514b87c9789269e9f66f949ffe0
+Archive SHA256: 48179d37197b6975d5496b8e5e15098f8e94cb36e56d935cecd88e5fc1b725c4
