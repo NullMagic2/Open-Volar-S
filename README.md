@@ -86,7 +86,7 @@ Native Windows and Linux live playback does **not** use mpv or an external FFmpe
 
 Time shifting requires an active recording or a saved recording. Ordinary live viewing does not create a rewind buffer. Guide, caption, and audio-track availability depend on the selected broadcast.
 
-### VLC on Linux
+### VLC Compatibility Tutorial
 
 1. Install the updated Linux package, then close Live TV! and other tuner applications. Only one application can control the tuner at a time.
 2. In VLC, open **Media → Open Capture Device** and set **Capture mode** to **TV - digital**.
