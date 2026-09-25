@@ -57,7 +57,7 @@ The viewing window keeps playback, recording, channel selection, volume, snapsho
 | --- | --- |
 | **Native Linux and Windows interface** | Rust and Windows native (GTK-3 on Linux). Although we use different toolkits for each operating system, the look and feel of the interface has been unified, and it comes with Metal, Glass, and Plastic button styles. |
 | **Optimized for many scenarios** | Our interface is WSL-friendly, executing video and sound passthrough if WSL is detected. WINE is also well supported, and it has a compatibility mode for external players, such as VLC. |
-| **Language support** | The interface is available in English, Brazilian Portuguese, Spanish, and Greek. |
+| **Language support** | Aavailable in English, Brazilian Portuguese, Spanish, and Greek. |
 | **Vulkan Video playback** | Hardware-accelerated H.264 decoding through Vulkan Video on supported GPUs. Windows also offers a Microsoft decoder; native Linux playback requires Vulkan Video support. |
 | **Picture controls** | Deinterlacing, scaling, aspect-ratio controls, picture adjustments, and ICC color-profile support. |
 | **Recording and time shift** | Preserve the original broadcast transport stream; pause, seek, and step through a growing recording, or open a saved `.ts` file. |
