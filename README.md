@@ -143,6 +143,8 @@ Third-party code and assets retain their own terms. See [THIRD_PARTY.md](THIRD_P
 
 ## Linux port
 
+Please note that the target Linux distribution is Ubuntu 22.04 to 26.04. Other distributions may work, but this is not guaranteed.
+
 The Linux USB driver, Rust command-line receiver tools and Debug Desk, Rust graphical DEB/RPM installer, Ubuntu 22.04–26.04 kernel compatibility checks, and WSL setup notes are in [linux/README.md](linux/README.md). The Linux GTK Live TV! interface reuses Windows artwork and runs the Rust receiver with native Vulkan Video playback. See [native Linux player requirements](docs/NATIVE-LINUX-PLAYER.md) for supported hardware and limits.
 
 ### Wine on Linux
