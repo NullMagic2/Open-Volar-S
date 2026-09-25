@@ -89,7 +89,6 @@ Native Windows and Linux live playback does **not** use mpv or an external FFmpe
 Time shifting requires an active recording or a saved recording. Ordinary live viewing does not create a rewind buffer. Guide, caption, and audio-track availability depend on the selected broadcast.
 <br>
 
----
 
 ### VLC Compatibility Tutorial
 
