@@ -8,7 +8,7 @@
 
 <p align="center">
   <strong>A new life for the original AVerTV Volar S.</strong><br>
-  A Rust-based toolkit with Windows Live TV and Linux receiver support,<br>
+  A Rust-based toolkit with native Windows and Linux Live TV,<br>
   source-built firmware, diagnostics, and the native <strong>Live TV!</strong> application.
 </p>
 
@@ -27,7 +27,7 @@
 
 ---
 
-**Open Volar S** brings the original **AVerTV Volar S (A865R)** to a modern Rust-based software stack: a userspace driver, source-built firmware, diagnostic tools, and **Live TV!**, a native Windows television application.
+**Open Volar S** brings the original **AVerTV Volar S (A865R)** to a modern Rust-based software stack: a userspace driver, source-built firmware, diagnostic tools, and **Live TV!**, a native Windows and Linux television application.
 
 Watch broadcasts in a dedicated viewing window, control playback from a hardware-inspired receiver panel, record the original transport stream, browse program information, and tune the image and audio path without relying on a browser-based UI.
 
@@ -55,36 +55,46 @@ The viewing window keeps playback, recording, channel selection, volume, snapsho
 
 | Feature | What it offers |
 | --- | --- |
-| **Native Windows interface** | Rust and `windows-rs`, with no browser runtime. Metal, Glass, and Plastic button styles; English, Brazilian Portuguese, Spanish, and Greek interface languages. |
-| **Vulkan Video playback** | Hardware-accelerated H.264 decoding through Vulkan Video where supported, with a selectable Microsoft decoder as an alternative backend. |
+| **Native Linux and Windows interface** | Rust and Windows native (GTK-3 on Linux). Although we use different toolkits for each operating system, the look and feel of the interface has been unified, and it comes with Metal, Glass, and Plastic button styles. |
+| **Optimized for many scenarios** | Our interface is WSL-friendly, executing video and sound passthrough if WSL is detected. WINE is also well supported, and it has a compatibility mode for external players, such as VLC. |
+| **Language support** | The interface is available in English, Brazilian Portuguese, Spanish, and Greek. |
+| **Vulkan Video playback** | Hardware-accelerated H.264 decoding through Vulkan Video on supported GPUs. Windows also offers a Microsoft decoder; native Linux playback requires Vulkan Video support. |
 | **Picture controls** | Deinterlacing, scaling, aspect-ratio controls, picture adjustments, and ICC color-profile support. |
 | **Recording and time shift** | Preserve the original broadcast transport stream; pause, seek, and step through a growing recording, or open a saved `.ts` file. |
 | **Guide and captions** | Electronic program guide and supported ISDB closed captions using information supplied by the broadcaster. |
-| **Audio controls** | Broadcast track selection, stereo/mono/left/right modes, and 5.1 output when supported by the broadcast and Windows audio configuration. |
+| **Audio controls** | Broadcast track selection, stereo/mono/left/right modes, and 5.1 output when supported by the broadcast and audio device. |
 | **Open tuner stack** | Rust receiver API, command-line utilities, Debug Desk, source-built firmware loaded into device RAM, and experimental BDA compatibility adapters. |
-
-> **Alpha release:** Open Volar S currently targets a specific Volar S hardware revision. It is not intended to be a universal TV-tuner driver.
 
 ## Supported hardware
 
 | Component | Requirement |
 | --- | --- |
-| **Operating system** | Windows 10 or Windows 11, 64-bit, with the required Windows media components. |
+| **Operating system** | Windows 10 or Windows 11, 64-bit, with the required media components; or Linux x86_64. The supplied Linux binaries require glibc 2.43. |
 | **Receiver** | Original AVerTV Volar S **A865R**, USB ID **`07CA:B865`**, **IT9175 revision 1**, tuner ID **`0x70`**. Other revisions are not currently claimed to be supported. |
 | **Broadcast** | **6 MHz ISDB-T UHF**, with a suitable antenna and local coverage. A Brazil preset and custom scans are available. |
-| **USB access** | The supported receiver must already use the project's WinUSB setup. Only one television or diagnostic client should own the tuner at a time. |
-| **Graphics** | A compatible GPU and driver for the selected backend. Vulkan Video playback requires H.264 decode support for the broadcast profile and layout; Microsoft decoding is also selectable. |
+| **USB access** | Windows requires the project's existing WinUSB setup; Linux uses the packaged USB driver. Only one television or diagnostic client should own the tuner at a time. |
+| **Graphics** | A compatible GPU and driver for the selected backend. Native Linux playback requires Vulkan Video H.264 support; Windows also offers Microsoft decoding. |
 
-Native live playback does **not** use mpv or an external FFmpeg video decoder. External FFmpeg is used for recording validation/repair and optional processed AVerTV adapter modes. Original broadcast captures are retained separately from any verified or repaired output.
+Native Windows and Linux live playback does **not** use mpv or an external FFmpeg video decoder. The Wine/WSL playback bridges still use their earlier backends, and recording export can use FFmpeg. Original broadcast captures are retained separately from any verified or repaired output.
 
 ## Getting started
 
-1. **Prepare the receiver.** Connect the supported tuner and antenna, verify its existing WinUSB setup, and close other applications using the tuner. The application installer registers the standard BDA adapters for the current user, but does not create a new USB binding. See [standard TV application access](docs/TV-COMPATIBILITY.md). See the [WinUSB files](windows/winusb/) and [adapter documentation](docs/BDA_COMPATIBILITY.md).
+1. **Prepare the receiver.** Connect the supported tuner and antenna, then close other applications using it. On Windows, verify the existing [WinUSB setup](windows/winusb/); the installer registers BDA adapters but does not create a USB binding. On Linux, install the package for the USB driver and device permissions. See [standard TV application access](docs/TV-COMPATIBILITY.md).
 2. **Launch Live TV! and scan.** Build the application as described below, or use a matching binary release when available. Open **Settings → Channels**, choose the appropriate scan profile, and scan for local services.
 3. **Select a service and start playback.** Choose a discovered service from the receiver panel and use **Play** to begin viewing.
 4. **Tune the experience.** Use **Settings → Video** for decoder, aspect ratio, and color profile; **Storage** for recording and snapshot folders; and **Themes** for control materials.
 
 Time shifting requires an active recording or a saved recording. Ordinary live viewing does not create a rewind buffer. Guide, caption, and audio-track availability depend on the selected broadcast.
+
+### VLC on Linux
+
+1. Install the updated Linux package, then close Live TV! and other tuner applications. Only one application can control the tuner at a time.
+2. In VLC, open **Media → Open Capture Device** and set **Capture mode** to **TV - digital**.
+3. Select the tuner, usually `/dev/dvb/adapter0`. Use its actual adapter number if you have more than one tuner.
+4. Choose **DVB-T**, enter your local channel frequency in **kHz**, and set the bandwidth to **6 MHz**.
+5. Click **Play**. If the frequency carries several services, choose one under **Playback → Program**.
+
+VLC 3's capture dialog does not offer ISDB-T, so the Linux driver advertises DVB-T as a compatibility alias. When VLC selects DVB-T, the driver maps that tuning request to ISDB-T. The alias is enabled by default and changes only tuning; it does not transcode or buffer video, or enable reception of DVB-T broadcasts. See [VLC compatibility](COMPATIBILITY.md) for command-line use, program selection, and limitations. Windows BDA access is described separately in [TV compatibility](docs/TV-COMPATIBILITY.md).
 
 ## Building from source
 
@@ -101,7 +111,7 @@ To preview the interface without opening the tuner:
 .\target\release\live-tv.exe --ui-preview --profile-dir .\target\ui-preview-profile
 ```
 
-The internal Cargo package is named `a865r-tv`; the application itself is **Live TV!**. The source archive includes artwork, shaders, the lockfile, and third-party notices, but not compiled applications or DLLs.
+The internal Cargo package is named `a865r-tv`; the application itself is **Live TV!**. The source archive includes artwork, shaders, the lockfile, and [LICENSES.md](LICENSES.md), but not compiled applications or DLLs.
 
 See [BUILD-SOURCE.md](BUILD-SOURCE.md) for workspace builds, tests, and installer packaging.
 
@@ -133,7 +143,7 @@ Third-party code and assets retain their own terms. See [THIRD_PARTY.md](THIRD_P
 
 ## Linux port
 
-The Linux USB driver, Rust command-line receiver tools and Debug Desk, Rust graphical DEB/RPM installer, Ubuntu 22.04–26.04 kernel compatibility checks, and WSL setup notes are in [linux/README.md](linux/README.md). The Linux GTK Live TV! interface reuses Windows artwork, runs the Rust receiver, and embeds mpv playback. The Windows DirectX/Vulkan renderer remains Windows-only.
+The Linux USB driver, Rust command-line receiver tools and Debug Desk, Rust graphical DEB/RPM installer, Ubuntu 22.04–26.04 kernel compatibility checks, and WSL setup notes are in [linux/README.md](linux/README.md). The Linux GTK Live TV! interface reuses Windows artwork and runs the Rust receiver with native Vulkan Video playback. See [native Linux player requirements](docs/NATIVE-LINUX-PLAYER.md) for supported hardware and limits.
 
 ### Wine on Linux
 
