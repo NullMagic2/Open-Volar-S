@@ -77,6 +77,8 @@ The viewing window keeps playback, recording, channel selection, volume, snapsho
 
 Native Windows and Linux live playback does **not** use mpv or an external FFmpeg video decoder. The Wine/WSL playback bridges still use their earlier backends, and recording export can use FFmpeg. Original broadcast captures are retained separately from any verified or repaired output.
 
+---
+
 ## Getting started
 
 1. **Prepare the receiver.** Connect the supported tuner and antenna, then close other applications using it. On Windows, verify the existing [WinUSB setup](windows/winusb/); the installer registers BDA adapters but does not create a USB binding. On Linux, install the package for the USB driver and device permissions. See [standard TV application access](docs/TV-COMPATIBILITY.md).
@@ -85,6 +87,9 @@ Native Windows and Linux live playback does **not** use mpv or an external FFmpe
 4. **Tune the experience.** Use **Settings → Video** for decoder, aspect ratio, and color profile; **Storage** for recording and snapshot folders; and **Themes** for control materials.
 
 Time shifting requires an active recording or a saved recording. Ordinary live viewing does not create a rewind buffer. Guide, caption, and audio-track availability depend on the selected broadcast.
+<br>
+
+---
 
 ### VLC Compatibility Tutorial
 
