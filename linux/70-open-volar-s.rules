@@ -1,0 +1,5 @@
+# Run before 73-seat-late.rules, which applies the active session's ACL.
+SUBSYSTEM=="usbmisc", KERNEL=="open-volar-s[0-9]*", GROUP="video", MODE="0660", TAG+="uaccess"
+# The broker is privileged; ordinary TV applications use the standard DVB nodes.
+SUBSYSTEM=="misc", KERNEL=="open-volar-dvb[0-9]*", MODE="0600", TAG+="systemd", ENV{SYSTEMD_WANTS}+="open-volar-s-dvb@%k.service"
+SUBSYSTEM=="dvb", ATTRS{idVendor}=="07ca", ATTRS{idProduct}=="b865", GROUP="video", MODE="0660", TAG+="uaccess"

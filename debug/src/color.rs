@@ -44,6 +44,9 @@ pub fn player_path() -> PathBuf {
     if let Some(path) = std::env::var_os("A865R_MPV") {
         return path.into();
     }
+    if cfg!(target_os = "linux") {
+        return PathBuf::from("mpv");
+    }
     let exe = std::env::current_exe().unwrap_or_default();
     for path in [
         exe.with_file_name("mpv.exe"),

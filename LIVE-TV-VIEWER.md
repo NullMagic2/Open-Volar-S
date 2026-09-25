@@ -32,11 +32,11 @@ The DAC retains its corrected corner artwork and recessed title treatment. Its L
 
 ## Files
 
-- `player/src/viewer.rs`: viewing console geometry, native painting, popup and hit testing.
-- `player/src/main.rs`: native window/command integration, contextual time and aspect sizing.
-- `player/src/native.rs`: live elapsed clock publication.
-- `player/src/orbit.rs`: shared cream ink and DAC hover-border thickness.
-- `player/assets/viewer`: embedded faces, indicators and filled glyphs.
+- `GUI/Windows/src/viewer.rs`: viewing console geometry, native painting, popup and hit testing.
+- `GUI/Windows/src/main.rs`: native window/command integration, contextual time and aspect sizing.
+- `GUI/Windows/src/native.rs`: live elapsed clock publication.
+- `GUI/Windows/src/orbit.rs`: shared cream ink and DAC hover-border thickness.
+- `GUI/Windows/assets/viewer`: embedded faces, indicators and filled glyphs.
 
 Build with `cargo build -p a865r-tv --release --locked`; test with `cargo test -p a865r-tv --bin live-tv --locked`. Run a hardware-free preview with `live-tv.exe --ui-preview --profile-dir <temporary-profile-folder>`.
 

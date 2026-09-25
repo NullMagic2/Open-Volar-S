@@ -1,0 +1,8 @@
+[package]
+name = "open-volar-s-dvb-bridge"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+liba865r = { path = "../../crates/liba865r" }

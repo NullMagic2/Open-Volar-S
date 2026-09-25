@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Open Volar S Live TV!
+Comment=Watch ISDB-T television with the A865R receiver
+Exec=open-volar-s-live-tv
+Icon=open-volar-s
+Terminal=false
+Categories=AudioVideo;Video;TV;

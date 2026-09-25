@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Open Volar S Debug Desk
+Comment=Inspect and record from an AVerTV Volar S A865R receiver
+Exec=a865r-debug
+Icon=open-volar-s
+Categories=AudioVideo;Video;
+Terminal=false

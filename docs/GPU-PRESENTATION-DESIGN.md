@@ -45,10 +45,10 @@ Use the existing small GPU viewport/upscale blit and vsync. Only handles and tim
 Retain the existing acquired-image host fence. The workspace-local wgpu-hal patch yields between short readiness checks while retaining the same acquisition, so wgpu-core releases its shared submission lock between checks. See ../third-party/wgpu-hal/A865R-PATCH.md. The earlier semaphore-only experiment did not resolve the sustained stall. Any further synchronization experiment must be isolated and retain all Vulkan-required image and semaphore dependencies.
 
 ## Minimal source changes
-The original combined Gpu::draw path has been split between player/src/vulkan.rs, player/src/vulkan_pipeline.rs and player/src/frame_pool.rs:
+The original combined Gpu::draw path has been split between GUI/Windows/src/vulkan.rs, GUI/Windows/src/vulkan_pipeline.rs and GUI/Windows/src/frame_pool.rs:
 
 1. Extract preparation into a renderer accepting a leased pool target and returning timestamped PreparedFrame metadata after submission.
-2. Separate processed texture/bind-group ownership from player/src/canvas.rs Canvas. Reuse its viewport shader and geometry in the presenter.
+2. Separate processed texture/bind-group ownership from GUI/Windows/src/canvas.rs Canvas. Reuse its viewport shader and geometry in the presenter.
 3. Move surface/configure/acquire/present ownership into the new thread. Share device/queue handles through existing safe abstractions.
 4. Connect the pool to existing epoch, audio-clock, pause, error and shutdown handling. Preserve decoder resource ownership and broadcast/audio behavior.
 5. Run explicitly requested snapshot readback from a retained frame lease without blocking the presentation worker. Normal playback continues without readback.

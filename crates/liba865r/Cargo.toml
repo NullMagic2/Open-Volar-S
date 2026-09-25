@@ -10,3 +10,4 @@ name = "a865r"
 path = "src/lib.rs"
 
 [dependencies]
+serde_json = "=1.0.151"

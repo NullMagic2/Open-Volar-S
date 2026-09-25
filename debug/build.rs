@@ -1,18 +1,26 @@
+#[path = "../tools/windows_resource.rs"] mod windows_resource;
 fn main() {
-    println!("cargo:rerun-if-changed=app.rc");
-    println!("cargo:rerun-if-changed=../player/assets/app.ico");
+    println!("cargo:rerun-if-changed=../linux/debug/wsl_clock.c");
+    println!("cargo:rerun-if-changed=../linux/debug/wsl_audio.c");
+    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux")
+        && std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("gnu") {
+        let output = std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("wsl-clock.so");
+        let cc = std::env::var_os("CC").unwrap_or_else(|| "cc".into());
+        assert!(std::process::Command::new(cc)
+            .args(["-shared", "-fPIC", "-O2", "-Wall", "-Wextra", "-Werror", "-pthread",
+                "../linux/debug/wsl_clock.c", "-ldl", "-o"])
+            .arg(output).status().expect("compile WSL clock compatibility library").success());
+        let output = std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("wsl-audio.so");
+        let cc = std::env::var_os("CC").unwrap_or_else(|| "cc".into());
+        assert!(std::process::Command::new(cc)
+            .args(["-shared", "-fPIC", "-O2", "-Wall", "-Wextra", "-Werror", "-pthread",
+                "../linux/debug/wsl_audio.c", "-ldl", "-o"])
+            .arg(output).status().expect("compile WSL audio adapter").success());
+    }
+    println!("cargo:rerun-if-changed=../windows/debug/app.rc");
+    println!("cargo:rerun-if-changed=../GUI/Windows/assets/app.ico");
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("windows")
         || std::env::var_os("CARGO_FEATURE_DESK").is_none() { return; }
-    let manifest = std::path::PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
-    let output = std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap()).join("app.res");
-    let rc = std::env::var_os("RC").map(std::path::PathBuf::from).unwrap_or_else(|| {
-        let kits = std::path::PathBuf::from(std::env::var_os("ProgramFiles(x86)").expect("Windows SDK required"))
-            .join("Windows Kits/10/bin");
-        let mut candidates: Vec<_> = std::fs::read_dir(kits).expect("Windows SDK required").flatten()
-            .map(|e| e.path().join("x64/rc.exe")).filter(|p| p.exists()).collect();
-        candidates.sort(); candidates.pop().expect("rc.exe required")
-    });
-    assert!(std::process::Command::new(rc).current_dir(manifest).arg("/nologo")
-        .arg("/fo").arg(&output).arg("app.rc").status().expect("compile icon resource").success());
-    println!("cargo:rustc-link-arg-bin=a865r-debug={}", output.display());
+    let directory=std::path::PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap()).join("../windows/debug");
+    windows_resource::compile(&directory,"app.rc",None,"a865r-debug");
 }

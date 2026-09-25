@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: MIT — original documentation text only; see LICENSE.md. -->
+<!-- SPDX-License-Identifier: MIT — original documentation text only; see LICENSES.md. -->
 
 <p align="center">
   <img src="images/open-volar-s-256.png" alt="Open Volar S USB tuner icon" width="112">
@@ -8,12 +8,12 @@
 
 <p align="center">
   <strong>A new life for the original AVerTV Volar S.</strong><br>
-  A Rust-based Windows TV toolkit with an open userspace receiver driver,<br>
+  A Rust-based toolkit with Windows Live TV and Linux receiver support,<br>
   source-built firmware, diagnostics, and the native <strong>Live TV!</strong> application.
 </p>
 
 <p align="center">
-  <strong>Windows 10 / 11 x64</strong> · <strong>Rust + Win32</strong> · <strong>Vulkan Video</strong> · <strong>0.8.0-alpha.43</strong>
+  <strong>Windows 10 / 11 and Linux x86_64</strong> · <strong>Rust</strong> · <strong>0.9.5</strong>
 </p>
 
 <p align="center">
@@ -79,7 +79,7 @@ Native live playback does **not** use mpv or an external FFmpeg video decoder. E
 
 ## Getting started
 
-1. **Prepare the receiver.** Connect the supported tuner and antenna, verify its existing WinUSB setup, and close other applications using the tuner. The application installer does not create a new USB binding or fresh BDA registration. See the [WinUSB files](winusb/) and [adapter documentation](docs/BDA_COMPATIBILITY.md).
+1. **Prepare the receiver.** Connect the supported tuner and antenna, verify its existing WinUSB setup, and close other applications using the tuner. The application installer registers the standard BDA adapters for the current user, but does not create a new USB binding. See [standard TV application access](docs/TV-COMPATIBILITY.md). See the [WinUSB files](windows/winusb/) and [adapter documentation](docs/BDA_COMPATIBILITY.md).
 2. **Launch Live TV! and scan.** Build the application as described below, or use a matching binary release when available. Open **Settings → Channels**, choose the appropriate scan profile, and scan for local services.
 3. **Select a service and start playback.** Choose a discovered service from the receiver panel and use **Play** to begin viewing.
 4. **Tune the experience.** Use **Settings → Video** for decoder, aspect ratio, and color profile; **Storage** for recording and snapshot folders; and **Themes** for control materials.
@@ -105,15 +105,19 @@ The internal Cargo package is named `a865r-tv`; the application itself is **Live
 
 See [BUILD-SOURCE.md](BUILD-SOURCE.md) for workspace builds, tests, and installer packaging.
 
+One source archive contains both platforms. On Windows, build with `cargo build -p a865r-tv -p a865r-debug -p a865rctl -p a865r-bda --release --locked`; on Linux, use `bash build.sh`. The Windows and Linux paths share the receiver library, CLI, Debug Desk, and `Cargo.lock`.
+
 ## Project structure
 
 | Location | Purpose |
 | --- | --- |
-| [`player/`](player/) | Live TV! interface, playback, graphics, audio, guide, captions, and recording. |
+| [`GUI/Windows/`](GUI/Windows/) | Win32 Live TV! interface, playback, graphics, audio, guide, captions, and recording. |
+| [`GUI/Linux/`](GUI/Linux/) | GTK Live TV! interface, shared artwork, Selawik fonts, and embedded playback. |
 | [`crates/liba865r/`](crates/liba865r/) | USB transport, tuner control, broadcast tables, and firmware support. |
-| [`crates/a865r-bda/`](crates/a865r-bda/) | Experimental Windows BDA/DirectShow compatibility. |
+| [`windows/a865r-bda/`](windows/a865r-bda/) | Experimental Windows BDA/DirectShow compatibility. |
 | [`crates/a865rctl/`](crates/a865rctl/) and [`debug/`](debug/) | Command-line tools and the diagnostic application. |
-| [`firmware/`](firmware/), [`installer/`](installer/), and [`docs/`](docs/) | Firmware, packaging, and technical documentation. |
+| [`windows/`](windows/) and [`linux/`](linux/) | Platform drivers, applications, and installers. |
+| [`firmware/`](firmware/) and [`docs/`](docs/) | Shared firmware and technical documentation. |
 
 The [Rust API reference](docs/API.md) and [firmware documentation](docs/OPEN_FIRMWARE.md) provide more technical detail.
 
@@ -121,8 +125,19 @@ Development history is kept separately in [HISTORY.md](HISTORY.md).
 
 ## License
 
-Original, independently authored Open Volar S material is additionally offered under the **MIT License**, with its scope and full text in [LICENSE.md](LICENSE.md).
+Original, independently authored Open Volar S material is additionally offered under the **MIT License**, with its scope and full text in [LICENSES.md](LICENSES.md).
 
-The receiver also contains **GPL-3.0-only** code adapted from `recfsusb2i`, so the **combined application remains distributed under GPL-3.0-only**, as recorded in [LICENSE](LICENSE) and the workspace manifests. This is therefore not an MIT-only distribution.
+The receiver also contains **GPL-3.0-only** code adapted from `recfsusb2i`, so the **combined application remains distributed under GPL-3.0-only**, as recorded in [LICENSES.md](LICENSES.md) and the workspace manifests. This is therefore not an MIT-only distribution.
 
-Third-party code and assets retain their own terms. See [THIRD_PARTY.md](THIRD_PARTY.md) and [`third-party-licenses/`](third-party-licenses/).
+Third-party code and assets retain their own terms. See [THIRD_PARTY.md](THIRD_PARTY.md) and [LICENSES.md](LICENSES.md).
+
+## Linux port
+
+The Linux USB driver, Rust command-line receiver tools and Debug Desk, Rust graphical DEB/RPM installer, Ubuntu 22.04–26.04 kernel compatibility checks, and WSL setup notes are in [linux/README.md](linux/README.md). The Linux GTK Live TV! interface reuses Windows artwork, runs the Rust receiver, and embeds mpv playback. The Windows DirectX/Vulkan renderer remains Windows-only.
+
+### Wine on Linux
+
+The Linux-built 0.9.5 Windows installer configures its native Linux helper and
+private authentication automatically. Install the Linux package first for driver
+permissions and mpv, then install and launch normally under Wine.
+See [Wine setup and requirements](docs/WINE.md).

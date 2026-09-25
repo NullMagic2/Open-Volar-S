@@ -6,15 +6,15 @@ use crate::{
     parser::reference_manager::{
         DecodeInformation, PictureInfo, ReferenceId, ReferencePictureInfo,
     },
-    vulkan_decoder::{ImageModifiers, VulkanDecoder},
+    vulkan_decoder::{DecodeSubmission, ImageModifiers, VulkanDecoder},
     wrappers::VideoSessionParameters,
 };
 use ash::vk;
 use broadcast_parser::{Event, Parser, Picture};
 use std::{collections::HashMap, sync::Arc};
 
-pub struct Frame {
-    pub texture: wgpu::Texture,
+pub struct Frame<T = wgpu::Texture> {
+    pub texture: T,
     pub display_aspect: (u32,u32),
     pub pts: i64,
     pub duration: i64,
@@ -23,14 +23,15 @@ pub struct Frame {
     pub bt709: bool,
     pub full: bool,
 }
-pub struct Decoder {
+pub struct Decoder<T = wgpu::Texture> {
     parser: Option<Parser>,
     gpu: VulkanDecoder<'static>,
     config: u64,
     stream_shape: Option<(u32, u32, u32, u32, u32)>,
     started: bool,
-    waiting: HashMap<u64, Frame>,
-    output: Vec<Frame>,
+    waiting: HashMap<u64, Frame<T>>,
+    output: Vec<Frame<T>>,
+    output_frame: for<'a, 'b> fn(DecodeSubmission<'a, 'b>) -> Result<T, VulkanDecoderError>,
 
     pub parsed_pictures: u64,
     pub skipped_startup_pictures: u64,
@@ -42,17 +43,32 @@ fn invalid(e: impl std::fmt::Display) -> VulkanDecoderError {
 }
 impl Decoder {
     pub fn new(device: &Arc<VulkanDevice>) -> Result<Self, VulkanDecoderError> {
+        Self::create(device, |submission| Ok(submission.output_to_wgpu_texture()?.frame), true)
+    }
+}
+impl Decoder<crate::RawFrameData> {
+    /// Decode with the same broadcast parser and Vulkan Video path, then read
+    /// NV12 back for an explicit cross-process/WSL bridge. No CPU video decoder.
+    pub fn new_bytes(device: &Arc<VulkanDevice>) -> Result<Self, VulkanDecoderError> {
+        Self::create(device, |submission| Ok(submission.download_output()?.frame), false)
+    }
+}
+impl<T> Decoder<T> {
+    fn create(device: &Arc<VulkanDevice>,
+        output_frame: for<'a, 'b> fn(DecodeSubmission<'a, 'b>) -> Result<T, VulkanDecoderError>,
+        texture_output: bool,
+    ) -> Result<Self, VulkanDecoderError> {
         if !cfg!(feature = "experimental-broadcast-gpu") {
             return Err(invalid(
                 "Experimental broadcast GPU decoding is disabled pending validation",
             ));
         }
-        if device.queues.transfer.family_index == device.queues.wgpu.family_index
+        if texture_output && (device.queues.transfer.family_index == device.queues.wgpu.family_index
             || device
                 .queues
                 .h264_decode
                 .as_ref()
-                .is_some_and(|q| q.family_index == device.queues.wgpu.family_index)
+                .is_some_and(|q| q.family_index == device.queues.wgpu.family_index))
         {
             return Err(invalid(
                 "This preview requires separate Vulkan video, transfer and presentation queue families",
@@ -76,6 +92,7 @@ impl Decoder {
             started: false,
             waiting: HashMap::new(),
             output: Vec::new(),
+            output_frame,
             parsed_pictures: 0,
             skipped_startup_pictures: 0,
             decoded_pictures: 0,
@@ -86,10 +103,10 @@ impl Decoder {
         &mut self,
         bytes: &[u8],
         pts: Option<i64>,
-    ) -> Result<Vec<Frame>, VulkanDecoderError> {
+    ) -> Result<Vec<Frame<T>>, VulkanDecoderError> {
         self.process(bytes, pts, false)
     }
-    pub fn flush(&mut self) -> Result<Vec<Frame>, VulkanDecoderError> {
+    pub fn flush(&mut self) -> Result<Vec<Frame<T>>, VulkanDecoderError> {
         self.process(&[], None, true)
     }
     fn process(
@@ -97,7 +114,7 @@ impl Decoder {
         bytes: &[u8],
         pts: Option<i64>,
         eos: bool,
-    ) -> Result<Vec<Frame>, VulkanDecoderError> {
+    ) -> Result<Vec<Frame<T>>, VulkanDecoderError> {
         let mut parser = self
             .parser
             .take()
@@ -334,7 +351,7 @@ impl Decoder {
             width: p.width,
             height: p.height,
         };
-        let texture = submission.output_to_wgpu_texture()?.frame;
+        let texture = (self.output_frame)(submission)?;
         let duration = if p.rate_num > 0 && p.rate_den > 0 {
             10_000_000 * p.rate_den as i64 / p.rate_num as i64
         } else {

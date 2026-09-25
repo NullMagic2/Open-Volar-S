@@ -2,8 +2,15 @@
 
 use crate::error::Result;
 
+#[cfg(any(windows, target_os="linux"))]
+pub mod wine_bridge;
+
 #[cfg(windows)]
+#[path = "../../../../windows/transport/winusb.rs"]
 mod winusb;
+#[cfg(target_os = "linux")]
+#[path = "../../../../linux/transport/linux.rs"]
+mod linux;
 
 /// Describes one USB bulk endpoint discovered on the active interface.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -54,21 +61,32 @@ pub trait Transport {
 pub fn default_transport() -> Box<dyn Transport> {
     #[cfg(windows)]
     {
+        if let Some(path) = std::env::var_os("OPEN_VOLAR_S_WINE_BRIDGE") {
+            return Box::new(wine_bridge::WineTransport::new(path.into()));
+        }
+        if wine_bridge::is_wine() {
+            return Box::new(wine_bridge::WineTransport::new(r"C:\open-volar-s-bridge.txt".into()));
+        }
         Box::new(winusb::WinUsbTransport::new())
     }
 
-    #[cfg(not(windows))]
+    #[cfg(target_os = "linux")]
+    {
+        Box::new(linux::LinuxUsbTransport::new())
+    }
+
+    #[cfg(not(any(windows, target_os = "linux")))]
     {
         Box::new(UnsupportedTransport::new())
     }
 }
 
-#[cfg(not(windows))]
+#[cfg(not(any(windows, target_os = "linux")))]
 struct UnsupportedTransport {
     pipes: Vec<BulkPipe>,
 }
 
-#[cfg(not(windows))]
+#[cfg(not(any(windows, target_os = "linux")))]
 impl UnsupportedTransport {
     /// Creates a backend that explains that hardware access is currently Windows-only.
     fn new() -> Self {
@@ -76,7 +94,7 @@ impl UnsupportedTransport {
     }
 }
 
-#[cfg(not(windows))]
+#[cfg(not(any(windows, target_os = "linux")))]
 impl Transport for UnsupportedTransport {
     /// Rejects device opening on hosts for which no USB backend has been implemented yet.
     fn open(&mut self, _vendor_id: u16, _product_id: u16) -> Result<()> {
@@ -132,4 +150,10 @@ impl Transport for UnsupportedTransport {
     fn description(&self) -> String {
         "unsupported host transport".to_string()
     }
+}
+
+/// Open a specific Linux character device, keeping each DVB adapter tied to its USB receiver.
+#[cfg(target_os = "linux")]
+pub fn linux_device_transport(index:u32)->Box<dyn Transport> {
+    Box::new(linux::LinuxUsbTransport::for_device(index))
 }

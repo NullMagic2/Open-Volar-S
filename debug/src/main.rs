@@ -4,7 +4,9 @@ use a865r_media::playback;
 use a865r_media::native_player;
 mod television;
 
-use a865r::api::{ColorProfile, DeinterlaceMode, PlaybackSettings, RenderBackend, Resolution};
+use a865r::api::{ColorProfile, DeinterlaceMode, PlaybackSettings, RenderBackend};
+#[cfg(windows)]
+use a865r::api::Resolution;
 use a865r::{BulkPipe, Device, FirmwareImage, Result as UsbResult, Transport};
 use eframe::egui;
 use serde_json::{json, Value};
@@ -202,7 +204,7 @@ fn collect_probe(include_power: bool) -> Value {
             "eeprom_note": info.eeprom_probe_note})
         }
         Err(error) => json!({"success": false, "error": error.to_string(),
-            "next_step": "Check that the tuner is connected. Vendor BDA ownership does not expose this project's WinUSB interface; capture vendor-driver traffic in Wireshark separately."}),
+            "next_step": if cfg!(windows) { "Check that the tuner is connected. Vendor BDA ownership does not expose this project's WinUSB interface; capture vendor-driver traffic in Wireshark separately." } else { "Check that the tuner is connected and /dev/open-volar-sN exists; confirm the module is loaded and your account can open the device." }}),
     };
     let windows = if cfg!(windows) {
         let system = std::env::var_os("SystemRoot")
@@ -212,7 +214,7 @@ fn collect_probe(include_power: bool) -> Value {
             .args(["-NoProfile", "-NonInteractive", "-Command",
                 "[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new(); Get-PnpDevice -PresentOnly -ErrorAction Stop | Where-Object { $_.InstanceId -like 'USB\\VID_07CA&PID_B865*' } | Select-Object Status,Class,FriendlyName,InstanceId,Problem | ConvertTo-Json -Depth 3"]))
     } else {
-        json!({"success": false, "error": "Windows-only hardware backend"})
+        json!({"skipped": "Windows device inventory is not available on Linux"})
     };
     json!({"probe": probe, "windows_device_inventory": windows, "usb_transactions": events.lock().unwrap().clone(),
            "scope": "Read-oriented identification and optional power-register samples; no firmware upload, tuning, reset or driver installation."})
@@ -236,8 +238,16 @@ const POWER_REGISTERS: &[(u32, &str)] = &[
     (0x80ec3f, "OFDM EC3F: tuner power-off tail"),
 ];
 
+#[cfg(target_os = "linux")]
+fn exports_root(_root: &Path) -> PathBuf {
+    std::env::var_os("XDG_STATE_HOME").map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".local/state")))
+        .unwrap_or_else(std::env::temp_dir)
+        .join("open-volar-s/debug/exports")
+}
+
+#[cfg(windows)]
 fn exports_root(root: &Path) -> PathBuf {
-    // Installer marker separates immutable shared program files from each user's data.
     if root.join("installed-mode.txt").is_file() {
         if let Some(local) = std::env::var_os("LOCALAPPDATA") {
             return PathBuf::from(local).join("A865R/Debug/exports");
@@ -247,7 +257,10 @@ fn exports_root(root: &Path) -> PathBuf {
     root.join("debug/exports")
 }
 
-fn project_root() -> PathBuf {
+#[cfg(target_os = "linux")]
+fn project_root() -> PathBuf { PathBuf::new() }
+
+#[cfg(windows)]fn project_root() -> PathBuf {
     if let Ok(exe) = std::env::current_exe() {
         for dir in exe.ancestors().skip(1).take(5) {
             if dir.join("tools/usb_trace.py").is_file() {
@@ -261,6 +274,7 @@ fn project_root() -> PathBuf {
         .to_path_buf()
 }
 
+#[cfg(windows)]
 fn default_python() -> String {
     if let Some(p) = std::env::var_os("A865R_PYTHON") {
         return p.to_string_lossy().into_owned();
@@ -286,16 +300,23 @@ struct JobResult {
 }
 
 struct DebugApp {
+    #[cfg(windows)]
     root: PathBuf,
     session: PathBuf,
     log: String,
     notes: String,
     firmware: String,
+    #[cfg(windows)]
     capture: String,
+    #[cfg(windows)]
     python: String,
+    #[cfg(windows)]
     bus: String,
+    #[cfg(windows)]
     device: String,
+    #[cfg(windows)]
     section: String,
+    #[cfg(windows)]
     interface: String,
     busy: bool,
     job_number: u32,
@@ -323,16 +344,23 @@ impl DebugApp {
         let session =
             exports_root(&root).join(format!("session-{}-{}", now_ms(), std::process::id()));
         Self {
+            #[cfg(windows)]
             root,
             session,
             log: "Ready. Choose a diagnostic action. Results and failures appear here.\n".into(),
             notes: String::new(),
             firmware: String::new(),
+            #[cfg(windows)]
             capture: String::new(),
+            #[cfg(windows)]
             python: default_python(),
+            #[cfg(windows)]
             bus: String::new(),
+            #[cfg(windows)]
             device: String::new(),
+            #[cfg(windows)]
             section: String::new(),
+            #[cfg(windows)]
             interface: String::new(),
             busy: false,
             job_number: 0,
@@ -341,7 +369,7 @@ impl DebugApp {
             status: "Ready".into(),
             screenshot: None,
             frames: 0,
-            playback: PlaybackSettings::default(),
+            playback: { let mut settings = PlaybackSettings::default(); if cfg!(target_os = "linux") && std::env::var_os("WSL_DISTRO_NAME").is_some() { settings.deinterlacing = DeinterlaceMode::SingleRate; } settings },
             ffmpeg: playback::Options::default()
                 .ffmpeg
                 .to_string_lossy()
@@ -449,6 +477,7 @@ impl DebugApp {
                         }
                     });
             }
+            #[cfg(any(windows, target_os = "linux"))]
             if ui.button("Watch").clicked() {
                 self.start_tv(television::Action::Watch {
                     frequency: self.frequency,
@@ -463,6 +492,7 @@ impl DebugApp {
                 });
             }
         });
+        #[cfg(windows)]
         ui.horizontal(|ui| {
             ui.checkbox(&mut self.playback.upscaling_enabled, "Upscaling");
             egui::ComboBox::from_id_salt("resolution")
@@ -504,7 +534,21 @@ impl DebugApp {
                 }
             }
         });
+        #[cfg(target_os = "linux")]
+        ui.horizontal(|ui| {
+            if ui.button("Play recording with mpv…").clicked() {
+                if let Some(path) = rfd::FileDialog::new().add_filter("TV recording", &["ts", "mkv", "mp4"]).pick_file() {
+                    let options = self.player_options();
+                    let folder = self.session.join(format!("playback-{}", now_ms()));
+                    let control = playback::Control::default();
+                    self.control = Some(control.clone());
+                    self.start("Play recording", move || playback::play_file(options, path, folder, control));
+                }
+            }
+            ui.small("Recording saves the broadcast stream directly; no encoder or FFmpeg is needed.");
+        });
         ui.collapsing("Scan channels and playback settings",|ui| {
+            #[cfg(any(windows, target_os = "linux"))]
             egui::ComboBox::from_id_salt("deinterlace").selected_text(self.playback.deinterlacing.label()).show_ui(ui,|ui| {for mode in [DeinterlaceMode::DoubleRate,DeinterlaceMode::SingleRate,DeinterlaceMode::Off] {ui.selectable_value(&mut self.playback.deinterlacing,mode,mode.label());}});
             ui.horizontal(|ui| {
                 ui.radio_value(&mut self.custom_plan,false,"Brazil UHF");ui.radio_value(&mut self.custom_plan,true,"Custom ISDB-T frequencies");
@@ -514,8 +558,13 @@ impl DebugApp {
                 }
             });
             if self.custom_plan {ui.horizontal(|ui| {for (label,value) in [("First kHz",&mut self.scan_first),("Last kHz",&mut self.scan_last),("Step kHz",&mut self.scan_step)] {ui.label(label);ui.add(egui::DragValue::new(value));}});}
+            #[cfg(windows)]
             file_row(ui,"FFmpeg executable",&mut self.ffmpeg,&["exe"]);
+            #[cfg(windows)]
             ui.small("The native Live TV diagnostic player applies the monitor profile during presentation. Changes apply to the next playback session.");
+            #[cfg(target_os = "linux")]
+            ui.small("Linux live viewing and saved-file playback use mpv; reception and recording remain in Rust.");
+            #[cfg(windows)]
             if ui.button("Export capabilities & playback settings").clicked() {
                 let report=json!({"capabilities":television::capabilities_json(),"playback":{"resolution":self.playback.resolution.dimensions(),"upscaling_enabled":self.playback.upscaling_enabled,"effective_resolution":self.playback.effective_resolution().dimensions(),"backend":format!("{:?}",self.playback.backend),"cpu_threads":self.playback.cpu_threads,"deinterlacing":format!("{:?}",self.playback.deinterlacing),"color_profile":a865r_media::color::report_json(&a865r::api::ColorProfileStatus::new(self.playback.color_profile.clone()))}});
                 self.start("Capabilities API",move || report);
@@ -608,6 +657,7 @@ impl DebugApp {
         };
     }
 
+    #[cfg(windows)]
     fn analyze_capture(&mut self, inventory_only: bool) {
         let path = PathBuf::from(&self.capture);
         let python = self.python.clone();
@@ -702,9 +752,9 @@ impl eframe::App for DebugApp {
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
             ui.add_space(10.0);
             ui.heading("AVerTV Volar S  /  Debug desk");
-            ui.label(format!("Windows userspace TV and diagnostics  •  A865R / 07CA:B865  •  v{}",env!("CARGO_PKG_VERSION")));
+            ui.label(format!("{} userspace TV and diagnostics  •  A865R / 07CA:B865  •  v{}", if cfg!(windows) { "Windows" } else { "Linux" }, env!("CARGO_PKG_VERSION")));
             ui.add_space(6.0);
-            ui.label("Watch and record TV, compare firmware, and export development evidence.");
+            ui.label(if cfg!(windows) { "Watch and record TV, compare firmware, and export development evidence." } else { "Probe, scan, and record TV; export receiver diagnostics." });
             ui.small("Open firmware 0.1.4.0 receives TV on the tested A865R. Leave the firmware path empty to use it. Reception is verified locally on RF22.");
             ui.add_space(8.0);
         });
@@ -750,7 +800,7 @@ impl eframe::App for DebugApp {
                     }
                     if ui.button("Open exports folder").clicked() {
                         match self.save_export() {
-                            Ok(_) => { if let Err(e) = Command::new("explorer.exe").arg(&self.session).spawn() { self.status = e.to_string(); } }
+                            Ok(_) => { let opener = if cfg!(windows) { "explorer.exe" } else { "xdg-open" }; if let Err(e) = Command::new(opener).arg(&self.session).spawn() { self.status = e.to_string(); } }
                             Err(e) => self.status = e.to_string(),
                         }
                     }
@@ -783,6 +833,8 @@ impl eframe::App for DebugApp {
                     }
                 });
                 ui.separator();
+                #[cfg(windows)]
+                {
                 file_row(ui,"USB capture",&mut self.capture,&["pcap","pcapng","cap"]);
                 ui.horizontal(|ui| {
                     if ui.add_enabled(!self.capture.is_empty(),egui::Button::new("Inventory capture")).clicked(){self.analyze_capture(true);}
@@ -798,6 +850,7 @@ impl eframe::App for DebugApp {
                     });
                     file_row(ui,"Python executable",&mut self.python,&["exe"]);
                 });
+                }
             });
             ui.collapsing("Your observations (included in exports)",|ui|{
                 ui.label("Connection state, original driver behavior, channel/frequency, and what you clicked in Wireshark.");
@@ -887,7 +940,10 @@ fn main() -> eframe::Result {
                 let value = args[i + 1].clone();
                 match args[i].as_str() {
                     "--firmware" => app.firmware = value,
-                    "--capture" => app.capture = value,
+                    "--capture" => {
+                        #[cfg(windows)] { app.capture = value; }
+                        #[cfg(target_os = "linux")] { eprintln!("USB capture trace analysis is Windows-only"); std::process::exit(2); }
+                    },
                     "--collect-export" => export = Some(PathBuf::from(value)),
                     _ => app.screenshot = Some(PathBuf::from(value)),
                 }
@@ -914,6 +970,7 @@ fn main() -> eframe::Result {
         }
         return Ok(());
     }
+    #[cfg(any(windows, target_os = "linux"))]
     if let Some(frequency) = watch_frequency {
         let folder = play_export.unwrap_or_else(|| app.session.join("live-tv"));
         let control = playback::Control::default();
@@ -982,7 +1039,7 @@ fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         centered: true,
         viewport: egui::ViewportBuilder::default()
-            .with_icon(eframe::icon_data::from_png_bytes(include_bytes!("../../player/assets/app-icon.png")).expect("valid application icon"))
+            .with_icon(eframe::icon_data::from_png_bytes(include_bytes!("../../GUI/Windows/assets/app-icon.png")).expect("valid application icon"))
             .with_inner_size([1160.0, 940.0])
             .with_min_inner_size([850.0, 650.0]),
         ..Default::default()

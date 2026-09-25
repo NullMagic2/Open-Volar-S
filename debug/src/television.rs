@@ -204,7 +204,17 @@ pub fn run(
                         return Ok(json!({"stopped":true}));
                     }
                     let playback:Option<Value> = None;
-                    let capture = if continuous {
+                    let capture = if let Some(program)=options.program_id {
+                        control.status(format!("Recording selected TV service {program}"));
+                        control.start_selected_recording(&recording_path,program)?;
+                        let capture=if continuous {
+                            receiver.stream_chunks_until_stopped(&control.cancel,|data|{control.record_chunk(data)?;Ok(())})
+                        }else{
+                            receiver.stream_chunks(seconds,&control.cancel,|data|{control.record_chunk(data)?;Ok(())})
+                        };
+                        let finished=control.stop_recording();
+                        let capture=capture?;finished?;capture
+                    } else if continuous {
                         control.status(format!("Recording {:.3} MHz",frequency as f64/1000.));
                         receiver.record_until_stopped(&recording_path,&control.cancel)?
                     } else {
@@ -242,9 +252,9 @@ pub fn capabilities_for(info: Option<&a865r::DeviceInfo>) -> Value {
         "firmware":{"link":info.map(|i|i.firmware_version),"ofdm":null,"running":info.map(|i|i.firmware_running),"tested_open_version":[0,1,4,0]},
         "board_matches":c.detected_board_matches,"standard":c.standard,"bandwidth_khz":c.bandwidth_khz,
         "frequency_range_khz":[c.min_frequency_khz,c.max_frequency_khz],"manual_frequencies":true,"custom_scan":true,
-        "native_resolution":null,"maximum_upscaled_resolution":c.maximum_scaled_resolution,"rendering_backends":["auto","cpu","gpu"],
-        "upscaling_toggle":true,"cpu_threads_range":[1,64],"color_profile_modes":c.color_profile_modes,
-        "gpu_availability":"Measured when playback starts; use runtime status for the active backend",
+        "native_resolution":null,"maximum_upscaled_resolution":if cfg!(windows) { json!(c.maximum_scaled_resolution) } else { Value::Null },"rendering_backends":if cfg!(windows) { json!(["auto","cpu","gpu"]) } else { json!([]) },
+        "upscaling_toggle":cfg!(windows),"cpu_threads_range":if cfg!(windows) { json!([1,64]) } else { Value::Null },"color_profile_modes":if cfg!(windows) { json!(c.color_profile_modes) } else { json!([]) },
+        "gpu_availability":if cfg!(windows) { "Measured when playback starts; use runtime status for the active backend" } else { "Linux native renderer is unavailable" },
         "reference_firmware_reception_verified":c.reference_firmware_reception_verified,"open_firmware_reception_verified":c.open_firmware_reception_verified})
 }
 

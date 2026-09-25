@@ -91,7 +91,7 @@ impl Device {
         }
         Ok(crate::remote::Infrared::new(self.transport.as_mut()))
     }
-    /// Creates a device using the default host backend (WinUSB on Windows).
+    /// Creates a device using the default host backend.
     pub fn new() -> Self {
         Self::with_transport(default_transport())
     }
@@ -124,7 +124,7 @@ impl Device {
         let outputs: Vec<BulkPipe> = pipes.iter().copied().filter(|pipe| !pipe.input).collect();
         if inputs.is_empty() || outputs.is_empty() {
             return Err(Error::Transport(
-                "active WinUSB interface does not expose both bulk IN and bulk OUT endpoints"
+                "active USB interface does not expose both bulk IN and bulk OUT endpoints"
                     .to_string(),
             ));
         }

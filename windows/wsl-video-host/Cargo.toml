@@ -1,0 +1,11 @@
+[package]
+name = "open-volar-s-wsl-video-host"
+version = "0.9.5"
+edition = "2021"
+license = "GPL-3.0-only"
+
+[target.'cfg(windows)'.dependencies]
+gpu-video = { path = "../../third-party/gpu-video", default-features = false, features = ["wgpu", "experimental-broadcast-gpu"] }
+
+[build-dependencies]
+cc = "=1.4.5"

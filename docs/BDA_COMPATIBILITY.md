@@ -2,7 +2,7 @@
 
 # Experimental userspace BDA adapter
 
-`crates/a865r-bda` builds both 32-bit and 64-bit DirectShow COM adapters. The
+`windows/a865r-bda` builds both 32-bit and 64-bit DirectShow COM adapters. The
 physical device remains bound to WinUSB. This is development software, not a
 complete replacement for the original Windows BDA driver.
 

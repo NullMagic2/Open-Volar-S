@@ -6,12 +6,17 @@ members = [
     "crates/liba865r",
     "crates/a865rctl",
     "debug",
-    "crates/a865r-bda",
-    "player",
+    "linux/installer",
+    "linux/dvb-bridge",
+    "linux/player",
+    "GUI/Linux",
+    "windows/a865r-bda",
+    "windows/wsl-video-host",
+    "GUI/Windows",
 ]
 
 [workspace.package]
-version = "0.7.0"
+version = "0.9.5"
 edition = "2021"
 license = "GPL-3.0-only"
 

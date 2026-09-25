@@ -11,3 +11,25 @@
 *.bin
 .vs/
 .vscode/
+/dist/
+/linux/.package-work/
+/linux/*.o
+/linux/*.ko
+/linux/*.mod
+/linux/*.mod.c
+/linux/.*.cmd
+/linux/Module.symvers
+/linux/modules.order
+/linux/.tmp_versions/
+__pycache__/
+*.pyc
+
+# Windows installer staging
+/windows/bin/
+/windows/player/*.exe
+/windows/player/*.dll
+/windows/adapter-update/x86/
+/windows/adapter-update/x64/
+
+# Local compiler/dependency cache
+/.build-cache/

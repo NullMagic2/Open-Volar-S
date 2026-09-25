@@ -1,0 +1,15 @@
+[package]
+name = "open-volar-s-player"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gpu-video = { path = "../../third-party/gpu-video", default-features = false, features = ["wgpu", "experimental-broadcast-gpu"] }
+wgpu = { version = "=29.0.0", default-features = false, features = ["std", "wgsl", "vulkan"] }
+raw-window-handle = "=0.6.2"
+pollster = "=0.3.0"
+serde_json = "=1.0.151"
+libc = "=0.2.189"
+image = { version = "=0.25.10", default-features = false, features = ["png"] }
+liba865r = { path = "../../crates/liba865r" }

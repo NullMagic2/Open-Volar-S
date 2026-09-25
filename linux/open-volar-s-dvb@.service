@@ -1,0 +1,13 @@
+[Unit]
+Description=Open Volar S DVB receiver for %i
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/open-volar-s-dvb-bridge /dev/%i
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes

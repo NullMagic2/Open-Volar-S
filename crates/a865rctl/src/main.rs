@@ -15,6 +15,9 @@ fn print_usage() {
     println!(
         "a865rctl - open-source AVerMedia A865R research utility\n\n\
 Usage:\n\
+  a865rctl wine-bridge <private-config-file> (Linux)\n\
+  a865rctl wine-setup <Linux-helper-path> (Wine installer)\n\
+  a865rctl wine-remove <Linux-helper-path> (Wine uninstaller)\n\
   a865rctl probe\n\
   a865rctl diagnose [firmware.bin]\n\
   a865rctl extract-firmware <AVer857BDA.sys> <firmware.bin>\n\
@@ -623,6 +626,16 @@ fn print_ts_stats(stats: &a865r::TsStats) {
 /// Dispatches command-line arguments to the requested operation.
 fn run() -> Result<()> {
     let args: Vec<String> = env::args().collect();
+    #[cfg(windows)]
+    if matches!(args.get(1).map(String::as_str),Some("wine-setup"|"wine-remove")) {
+        let path=args.get(2).ok_or_else(||Error::InvalidArgument("Missing Linux helper path".into()))?;
+        return a865r::transport::wine_bridge::install_helper(Path::new(path),args[1]=="wine-remove");
+    }
+    #[cfg(target_os="linux")]
+    if args.get(1).map(String::as_str)==Some("wine-bridge") {
+        let path=args.get(2).ok_or_else(||Error::InvalidArgument("Usage: a865rctl wine-bridge CONFIG_FILE".into()))?;
+        return a865r::transport::wine_bridge::serve(Path::new(path));
+    }
     match args.as_slice() {
         [_, command, frequency, output]
             if command == "test-lifecycle" || command == "test-lifecycle-open" =>

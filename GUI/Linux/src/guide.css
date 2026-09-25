@@ -1,0 +1,16 @@
+/* Windows guide palette, scoped so native file dialogs keep the desktop theme. */
+window.orbit-guide { color: #e9d7b8; font-family: Selawik, sans-serif; font-size: 16px; }
+window.orbit-guide .guide-title { color: #d9c29f; font-weight: bold; }
+window.orbit-guide .guide-well { background: #1c140e; border: 1px solid #735536; border-radius: 12px; padding: 12px; }
+window.orbit-guide label { color: #ddcdb3; }
+window.orbit-guide combobox button { min-height: 28px; padding: 4px 10px; }
+window.orbit-guide treeview.view, window.orbit-guide textview, window.orbit-guide textview text { background: #231912; color: #e9d7b8; }
+window.orbit-guide treeview.view { -GtkTreeView-vertical-separator: 10; -GtkTreeView-horizontal-separator: 12; }
+window.orbit-guide treeview.view:selected, window.orbit-guide treeview.view:selected:focus, window.orbit-guide textview text selection { background: #4c3421; color: #fff0d5; }
+window.orbit-guide treeview header button { background: #322519; color: #d9c29f; border: 0; border-bottom: 1px solid #795e3e; border-radius: 0; padding: 7px 6px; font-weight: bold; }
+window.orbit-guide scrolledwindow { border: 1px solid #6b5035; border-radius: 5px; }
+window.orbit-guide scrollbar { background: #231912; }
+window.orbit-guide scrollbar slider { background: #806343; min-width: 8px; min-height: 8px; border: 2px solid #231912; border-radius: 6px; }
+window.orbit-guide scrollbar slider:hover { background: #be995b; }
+window.orbit-guide .guide-footer { font-size: 14px; color: #bca78b; }
+window.orbit-guide .guide-grip { color: #be995b; }

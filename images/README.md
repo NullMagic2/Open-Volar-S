@@ -9,6 +9,6 @@ The approved application icon is the gentle-angle ruby USB tuner with a white et
 - `draw_volar_ruby_etched.py`: original Python drawing source (Pillow and NumPy).
 - `export_svg.py`: reconstructs vector layers from that drawing, preserving the lock perspective. Fine satin brushing is approximated with sampled vertical gradient stops.
 
-Live TV and Debug Desk embed the default icon; the installer uses it as well. Runtime assets in `player/assets` are byte-identical copies of the default PNG and ICO here. No raster images are embedded in the SVG files.
+Live TV and Debug Desk embed the default icon; the installer uses it as well. Runtime assets in `GUI/Windows/assets` are byte-identical copies of the default PNG and ICO here. No raster images are embedded in the SVG files.
 
 Alpha.34: enlarged by 8.5% using the opaque hardware bounds, with 12 px canvas padding at 1024 px. The original object proportions and lock perspective are preserved.

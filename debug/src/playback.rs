@@ -30,7 +30,9 @@ impl Default for Options {
     fn default() -> Self {
         let installed = PathBuf::from(r"C:\Program Files\FFmpeg\bin\ffmpeg.exe");
         Self {
-            ffmpeg: if installed.is_file() {
+            ffmpeg: if cfg!(target_os = "linux") {
+                PathBuf::from("ffmpeg")
+            } else if installed.is_file() {
                 installed
             } else {
                 PathBuf::from("ffmpeg.exe")
@@ -79,6 +81,9 @@ pub struct CaptionOverlay {
 }
 #[derive(Clone, Default)]
 pub struct Control {
+    #[cfg(target_os="linux")]
+    pub caption_stream:Arc<Mutex<crate::caption_stream::Stream>>,
+    recording: Arc<Mutex<Option<Recording>>>,
     pub cancel: Arc<AtomicBool>,
     pub finalization_cancel: Arc<AtomicBool>,
     pub captions:Arc<Mutex<CaptionOverlay>>,
@@ -90,7 +95,42 @@ pub struct Control {
     status_path: Arc<Mutex<Option<PathBuf>>>,
     presenter: Arc<Mutex<Option<(usize, String, u32)>>>,
 }
+struct Recording {
+    file:File,
+    service:Option<crate::service_stream::SelectedRecording>,
+}
 impl Control {
+    pub fn start_recording(&self,path:&Path)->io::Result<()> {self.open_recording(path,None)}
+    /// Both GUIs use this entry point. An explicit service is never replaced by
+    /// another program, even when a mobile feed appears first in the multiplex.
+    pub fn start_selected_recording(&self,path:&Path,program:u32)->io::Result<()> {
+        let service=crate::service_stream::SelectedRecording::new(program)?;
+        self.open_recording(path,Some(service))
+    }
+    fn open_recording(&self,path:&Path,service:Option<crate::service_stream::SelectedRecording>)->io::Result<()> {
+        let mut recording=self.recording.lock().unwrap();
+        if recording.is_some(){return Err(io::Error::new(io::ErrorKind::AlreadyExists,"A recording is already running"));}
+        let file=File::options().write(true).create_new(true).open(path)?;
+        *recording=Some(Recording{file,service});Ok(())
+    }
+    pub fn stop_recording(&self)->io::Result<()> {
+        if let Some(recording)=self.recording.lock().unwrap().take(){
+            recording.file.sync_all()?;
+            if recording.service.as_ref().is_some_and(|s|!s.ready()){
+                return Err(io::Error::new(io::ErrorKind::UnexpectedEof,"Recording ended before a complete picture from the selected service arrived"));
+            }
+        }
+        Ok(())
+    }
+    pub fn record_chunk(&self,data:&[u8])->io::Result<()> {
+        use std::io::Write;
+        if let Some(recording)=self.recording.lock().unwrap().as_mut(){
+            if let Some(service)=recording.service.as_mut(){recording.file.write_all(&service.push(data)?)?;}
+            else{recording.file.write_all(data)?;}
+        }
+        Ok(())
+    }
+
     pub fn set_shader_state(&self,value:Value){let mut s=self.runtime.lock().unwrap();if s.is_null(){*s=json!({});}s["shader_acceleration"]=value;}
     pub fn set_native_diagnostic(&self,v:Value){let mut s=self.runtime.lock().unwrap();if s.is_null(){*s=json!({});}s["native_player"]=v;} 
     pub fn set_audio_details(&self,value:Value){let mut s=self.runtime.lock().unwrap();if s.is_null(){*s=json!({});}s["audio_details"]=value;}
@@ -170,6 +210,7 @@ impl Control {
         *self.message.lock().unwrap() = message.into();
     }
     pub fn stop(&self) {
+        let _=self.stop_recording();
         self.cancel.store(true, Ordering::Relaxed);
         self.kill_children();
         let mut state = self.runtime.lock().unwrap();
@@ -191,11 +232,11 @@ impl Control {
 
 }
 
-fn hidden(command: &mut Command) {
+fn hidden(_command: &mut Command) {
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
-        command.creation_flags(0x08000000);
+        _command.creation_flags(0x08000000);
     }
 }
 
@@ -291,9 +332,9 @@ pub fn select_program(
         .parent()
         .is_some_and(|p| !p.as_os_str().is_empty())
     {
-        options.ffmpeg.with_file_name("ffprobe.exe")
+        options.ffmpeg.with_file_name(if cfg!(windows) { "ffprobe.exe" } else { "ffprobe" })
     } else {
-        PathBuf::from("ffprobe.exe")
+        PathBuf::from(if cfg!(windows) { "ffprobe.exe" } else { "ffprobe" })
     };
     let mut command = Command::new(ffprobe);
     command

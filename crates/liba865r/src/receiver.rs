@@ -526,6 +526,11 @@ impl<'a> Receiver<'a> {
         self.stream_chunks_impl(Some(seconds), cancel, sink, None)
     }
 
+    /// Continuous capture with a caller-owned sink, used by service recording.
+    pub fn stream_chunks_until_stopped(&mut self,cancel:&AtomicBool,sink:impl FnMut(&[u8])->Result<()>)->Result<CaptureReport>{
+        self.stream_chunks_impl(None,cancel,sink,None)
+    }
+
     /// Refreshes measured signal information every 500 ms on the USB owner thread.
     /// Monitoring errors are reported separately and do not discard received video.
     pub fn stream_chunks_monitored(

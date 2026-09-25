@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Run Windows Live TV!/diagnostics with authenticated access to the Linux tuner.
+set -euo pipefail
+WINE="${WINE:-wine}"
+export WINEPREFIX="${WINEPREFIX:-$HOME/.wine}"
+WINEPREFIX="$(realpath -m "$WINEPREFIX")"
+export WINEPREFIX
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CTL="${OPEN_VOLAR_S_CTL:-a865rctl}"
+if [[ -x "$SCRIPT_DIR/../target/release/a865rctl" && -z "${OPEN_VOLAR_S_CTL:-}" ]]; then
+  CTL="$SCRIPT_DIR/../target/release/a865rctl"
+fi
+command -v "$WINE" >/dev/null
+command -v "$CTL" >/dev/null
+# Initialize the prefix through Wine, never by fabricating Windows folders.
+"$WINE" wineboot -u >/dev/null 2>&1
+if [[ "${1:-}" == --install ]]; then
+  shift
+  [[ $# -ge 1 ]] || { echo 'Usage: open-volar-s-wine --install SETUP.exe [setup options]' >&2; exit 2; }
+  exec "$WINE" "$@"
+fi
+if [[ $# -eq 0 ]]; then
+  local_app_data="$("$WINE" cmd /c 'echo %LOCALAPPDATA%' | tr -d '\r')"
+  set -- "$local_app_data\\Programs\\A865R\\player\\live-tv.exe"
+fi
+config="$WINEPREFIX/drive_c/open-volar-s-bridge.txt"
+# Installed applications start/restart their own helper; the launcher is optional.
+if [[ -f "$WINEPREFIX/drive_c/open-volar-s-wine-helper.txt" ]]; then
+  exec "$WINE" "$@"
+fi
+if [[ -e "$config" ]]; then
+  echo "Another bridge configuration exists at $config; close its launcher first." >&2
+  exit 1
+fi
+"$CTL" wine-bridge "$config" &
+bridge_pid=$!
+cleanup() {
+  kill "$bridge_pid" 2>/dev/null || true
+  wait "$bridge_pid" 2>/dev/null || true
+  rm -f -- "$config"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+for _ in {1..100}; do
+  [[ -s "$config" ]] && break
+  kill -0 "$bridge_pid" 2>/dev/null || { echo 'Wine tuner bridge did not start.' >&2; exit 1; }
+  sleep 0.05
+done
+[[ -s "$config" ]] || { echo 'Wine tuner bridge startup timed out.' >&2; exit 1; }
+export OPEN_VOLAR_S_WINE_BRIDGE='C:\open-volar-s-bridge.txt'
+"$WINE" "$@"
