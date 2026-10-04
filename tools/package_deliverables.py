@@ -29,7 +29,7 @@ def zip_tree(directory, output):
             if path.is_file():
                 archive.write(path, path.relative_to(directory.parent))
 
-windows = WORK / 'Open-Volar-S-Windows-0.9.7'
+windows = WORK / 'Open-Volar-S-Windows-0.9.8'
 if windows.exists():
     shutil.rmtree(windows)
 for arch, target, names in [
@@ -65,7 +65,7 @@ copy(ROOT / 'docs/TV-COMPATIBILITY.md', windows / 'TV-COMPATIBILITY.md')
 copy(ROOT / 'docs/WINE.md', windows / 'WINE.md')
 copy(ROOT / 'docs/BUILD-AND-TEST-REPORT.md', windows / 'BUILD-AND-TEST-REPORT.md')
 copy(ROOT / 'docs/RELEASE-0.9.1-VALIDATION.md', windows / 'RELEASE-0.9.1-VALIDATION.md')
-(windows / 'README.txt').write_text('''Open Volar S 0.9.7 — Windows cross-build (x64 application; x64/x86 BDA adapters)
+(windows / 'README.txt').write_text('''Open Volar S 0.9.8 — Windows cross-build (x64 application; x64/x86 BDA adapters)
 Extract to a permanent directory. Requires the existing A865R WinUSB binding.
 Run PowerShell: powershell -NoProfile -ExecutionPolicy Bypass -File .\\register_tuner.ps1
 Launch x64\\live-tv.exe. Restart VLC after registration.
@@ -78,9 +78,9 @@ For Wine, install the Linux package and use open-volar-s-wine x64/live-tv.exe.
 The Windows installer configures its Wine helper automatically; see WINE.md.
 See TV-COMPATIBILITY.md and BUILD-AND-TEST-REPORT.md for limitations.
 ''')
-zip_tree(windows, DIST / 'Open-Volar-S-Windows-0.9.7.zip')
+zip_tree(windows, DIST / 'Open-Volar-S-Windows-0.9.8.zip')
 
-linux = WORK / 'Open-Volar-S-Linux-0.9.7'
+linux = WORK / 'Open-Volar-S-Linux-0.9.8'
 if linux.exists():
     shutil.rmtree(linux)
 for name in ['a865rctl', 'a865r-debug', 'open-volar-s-live-tv', 'open-volar-s-installer', 'open-volar-s-wsl-player', 'open-volar-s-dvb-bridge', 'open-volar-s-player']:
@@ -103,7 +103,7 @@ extracted source root or set OPEN_VOLAR_S_SOURCE to that directory.
 The WSL player helper is a Linux binary, not the Windows FFmpeg video host.
 See BUILD-AND-TEST-REPORT.md. Rebuild from source on older distributions.
 ''')
-with tarfile.open(DIST / 'Open-Volar-S-Linux-Binaries-0.9.7.tar.gz', 'w:gz') as archive:
+with tarfile.open(DIST / 'Open-Volar-S-Linux-Binaries-0.9.8.tar.gz', 'w:gz') as archive:
     archive.add(linux, arcname=linux.name)
 copy(ROOT / 'linux/open_volar_s_usb.ko', DIST / ('open_volar_s_usb-' + os.uname().release + '.ko'))
 
@@ -117,12 +117,12 @@ for directory, dirs, files in os.walk(ROOT):
         if name == 'SOURCE-MANIFEST.json' or name.endswith(('.pyc', '.o', '.ko', '.mod', '.mod.c', '.cmd')) or name in {'Module.symvers', 'modules.order'}:
             continue
         sources.append((relative, path))
-manifest = {'project': 'Open Volar S', 'application': 'Live TV!', 'version': '0.9.7',
+manifest = {'project': 'Open Volar S', 'application': 'Live TV!', 'version': '0.9.8',
             'variant': 'Native Linux Vulkan Video playback, shared Windows deinterlacing and PCM, existing DVB/BDA and Wine support',
             'files': {str(relative): {'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()} for relative, path in sorted(sources)}}
 (ROOT / 'SOURCE-MANIFEST.json').write_text(json.dumps(manifest, indent=2) + '\n')
 sources.append((Path('SOURCE-MANIFEST.json'), ROOT / 'SOURCE-MANIFEST.json'))
-with zipfile.ZipFile(DIST / 'Open-Volar-S-Source-0.9.7-updated.zip', 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+with zipfile.ZipFile(DIST / 'Open-Volar-S-Source-0.9.8-updated.zip', 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
     for relative, path in sorted(sources):
         archive.write(path, Path('open-volar-s') / relative)
 copy(ROOT / 'docs/BUILD-AND-TEST-REPORT.md', DIST / 'BUILD-AND-TEST-REPORT.md')
@@ -136,28 +136,28 @@ outputs = [DIST / name for name in [
     'WINE.md',
     'TV-COMPATIBILITY.md',
     'RELEASE-0.9.1-VALIDATION.md',
-    'Open-Volar-S-Linux-Binaries-0.9.7.tar.gz',
-    'Open-Volar-S-Setup-0.9.7-x64.exe',
-    'Open-Volar-S-Source-0.9.7-updated.zip',
-    'Open-Volar-S-Windows-0.9.7.zip',
-    'open-volar-s-0.9.7-1.x86_64.rpm',
-    'open-volar-s_0.9.7_amd64.deb',
+    'Open-Volar-S-Linux-Binaries-0.9.8.tar.gz',
+    'Open-Volar-S-Setup-0.9.8-x64.exe',
+    'Open-Volar-S-Source-0.9.8-updated.zip',
+    'Open-Volar-S-Windows-0.9.8.zip',
+    'open-volar-s-0.9.8-1.x86_64.rpm',
+    'open-volar-s_0.9.8_amd64.deb',
     'open_volar_s_usb-' + os.uname().release + '.ko',
 ]]
 (DIST / 'SHA256SUMS').write_text(''.join(hashlib.sha256(path.read_bytes()).hexdigest() + '  ' + path.name + '\n' for path in outputs))
-bundle = DIST / 'Open-Volar-S-All-Files-0.9.7.zip'
-bundle_root = Path('Open-Volar-S-All-Files-0.9.7')
+bundle = DIST / 'Open-Volar-S-All-Files-0.9.8.zip'
+bundle_root = Path('Open-Volar-S-All-Files-0.9.8')
 with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
     for path in outputs + [DIST / 'SHA256SUMS']:
         archive.write(path, bundle_root / path.name)
-    archive.writestr(str(bundle_root / 'README.txt'), '''Open Volar S 0.9.7 — native Linux playback update
+    archive.writestr(str(bundle_root / 'README.txt'), '''Open Volar S 0.9.8 — native Linux playback update
 
-Windows installer: Open-Volar-S-Setup-0.9.7-x64.exe
-Windows portable applications and x64/x86 BDA adapters: Open-Volar-S-Windows-0.9.7.zip
-Ubuntu/Debian installer: open-volar-s_0.9.7_amd64.deb
-RPM installer: open-volar-s-0.9.7-1.x86_64.rpm
-Linux standalone programs: Open-Volar-S-Linux-Binaries-0.9.7.tar.gz
-Complete source: Open-Volar-S-Source-0.9.7-updated.zip
+Windows installer: Open-Volar-S-Setup-0.9.8-x64.exe
+Windows portable applications and x64/x86 BDA adapters: Open-Volar-S-Windows-0.9.8.zip
+Ubuntu/Debian installer: open-volar-s_0.9.8_amd64.deb
+RPM installer: open-volar-s-0.9.8-1.x86_64.rpm
+Linux standalone programs: Open-Volar-S-Linux-Binaries-0.9.8.tar.gz
+Complete source: Open-Volar-S-Source-0.9.8-updated.zip
 
 This update adds the native Linux player with the shared Windows deinterlacer.
 Read NATIVE-LINUX-PLAYER.md for hardware requirements and remaining limitations.

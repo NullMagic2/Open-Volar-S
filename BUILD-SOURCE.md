@@ -1,6 +1,6 @@
 # Building Open Volar S
 
-These instructions describe the **0.9.7** source package. Commands are
+These instructions describe the **0.9.8** source package. Commands are
 run from the extracted workspace root in PowerShell on Windows.
 
 ## Requirements
@@ -90,7 +90,7 @@ and invokes Inno Setup. It expects Cargo's default `target/` directory; do not
 redirect `CARGO_TARGET_DIR` for this script without also updating its paths.
 
 The installer output is
-`Open-Volar-S-Setup-0.9.7-x64.exe`, in the `dist/` directory.
+`Open-Volar-S-Setup-0.9.8-x64.exe`, in the `dist/` directory.
 The current installer uses the native diagnostic player and does **not**
 require the old mpv runtime files. Ordinary application installation is per-user;
 only an optional protected adapter update may request elevation. Setup does not
@@ -109,7 +109,7 @@ the `LICENSES.md` file. It excludes compiled applications/DLLs, Cargo build outp
 local broadcast recordings, captures, and personal profiles.
 
 `SOURCE-MANIFEST.json` records every other packaged file's byte count and
-SHA-256 hash. It does not hash itself. This combined Windows/Linux source package keeps the application version at **0.9.7**. Platform-specific code lives under `windows/` and `linux/`; `crates/` and `debug/` are shared.
+SHA-256 hash. It does not hash itself. This combined Windows/Linux source package keeps the application version at **0.9.8**. Platform-specific code lives under `windows/` and `linux/`; `crates/` and `debug/` are shared.
 
 ## Licensing
 

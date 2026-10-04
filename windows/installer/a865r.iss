@@ -1,5 +1,5 @@
 ; Native userspace tools. No kernel package, binding change or firmware flashing.
-#define AppVersion "0.9.7"
+#define AppVersion "0.9.8"
 [Setup]
 #if VER >= EncodeVer(7, 0, 0)
 SetupArchitecture=x64
@@ -7,7 +7,7 @@ SetupArchitecture=x64
 AppId={{6C81FCAB-191E-4BB8-9585-D346954485D3}
 AppName=Open Volar S
 AppVersion={#AppVersion}
-VersionInfoVersion=0.9.7.0
+VersionInfoVersion=0.9.8.0
 AppPublisher=Open Volar S contributors
 DefaultDirName={localappdata}\Programs\A865R
 DefaultGroupName=Open Volar S
