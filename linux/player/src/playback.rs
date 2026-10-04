@@ -1,12 +1,12 @@
 //! Continuous native A/V playback. Video follows the audio device's audible PTS.
-use std::{sync::{Arc,Mutex,mpsc,atomic::{AtomicBool,Ordering}},collections::VecDeque,time::{Duration,Instant},io::Read};
+use std::{sync::{Arc,Mutex,mpsc,atomic::{AtomicBool,AtomicU64,Ordering}},collections::VecDeque,time::{Duration,Instant},io::Read};
 use gpu_video::{VulkanInstance,parameters::{VulkanAdapterDescriptor,VulkanDeviceDescriptor},broadcast::Frame};
 use crate::{source,control,aac,transport,latm,sound,video,window,audio_modes};
 enum Event{Video(Frame),Error(String),End}
 struct AudioFrame{pcm:aac::Pcm,pts:f64}
 #[derive(Default)]struct Clock{point:Option<(f64,Instant)>,end:f64,error:Option<String>,paused:Option<f64>,finished:bool}
 impl Clock{fn position(&self)->Option<f64>{self.paused.or_else(||self.point.map(|(p,t)|(p+t.elapsed().as_secs_f64()).min(self.end)))}}
-fn produce(source:Arc<source::Source>,cancel:Arc<AtomicBool>,device:Arc<gpu_video::VulkanDevice>,target_position:Option<f64>,tx:mpsc::SyncSender<Event>,audio_tx:mpsc::SyncSender<AudioFrame>,state:control::Shared)->Result<(),String>{
+fn produce(source:Arc<source::Source>,cancel:Arc<AtomicBool>,device:Arc<gpu_video::VulkanDevice>,target_position:Option<f64>,tx:mpsc::SyncSender<Event>,audio_tx:mpsc::SyncSender<AudioFrame>,state:control::Shared,discarded:Arc<AtomicU64>)->Result<(),String>{
     let settings=state.lock().unwrap().settings.clone();
     let initial_offset=source.range().0;let mut file=source.reader(initial_offset,cancel.clone());
     let mut start=Vec::new();let mut analyzer=a865r::TsAnalyzer::new();let mut chunk=[0;188*256];
@@ -50,19 +50,20 @@ fn produce(source:Arc<source::Source>,cancel:Arc<AtomicBool>,device:Arc<gpu_vide
     let mut packets=transport::Packets::new(file);
     while let Some(packet)=packets.next().map_err(|e|e.to_string())?{
         let pid=((packet[1] as u16&31)<<8)|packet[2] as u16;
-        if pid==video.pid{if let Some(p)=vp.push(&packet){for f in decoder.decode(&p.bytes,align(p.pts)).map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f)?;}}}}
+        if pid==video.pid{if let Some(p)=vp.push(&packet){for f in decoder.decode(&p.bytes,align(p.pts)).map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f,&discarded)?;}}}}
         else if audio.is_some_and(|s|s.pid==pid){if let Some(p)=ap.push(&packet){feed_audio(p)?;}}
     }
     if let Some(p)=ap.finish(){feed_audio(p)?;}
-    if let Some(p)=vp.finish(){for f in decoder.decode(&p.bytes,align(p.pts)).map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f)?;}}}
-    for f in decoder.flush().map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f)?;}}
+    if let Some(p)=vp.finish(){for f in decoder.decode(&p.bytes,align(p.pts)).map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f,&discarded)?;}}}
+    for f in decoder.flush().map_err(|e|e.to_string())?{if target.is_none_or(|t|f.pts as f64/1e7+f.duration as f64/1e7>t){send_video(&tx,f,&discarded)?;}}
     Ok(())
 }
 // A hidden/covered surface can block presentation. Never let its queue stop
 // audio decoding or transport consumption; discard display frames only.
-fn send_video(tx:&mpsc::SyncSender<Event>,frame:Frame)->Result<(),String>{
+fn send_video(tx:&mpsc::SyncSender<Event>,frame:Frame,discarded:&AtomicU64)->Result<(),String>{
     match tx.try_send(Event::Video(frame)){
-        Ok(())|Err(mpsc::TrySendError::Full(_))=>Ok(()),
+        Ok(())=>Ok(()),
+        Err(mpsc::TrySendError::Full(_))=>{discarded.fetch_add(1,Ordering::Relaxed);Ok(())},
         Err(mpsc::TrySendError::Disconnected(_))=>Err("Playback stopped".into()),
     }
 }
@@ -102,6 +103,14 @@ fn audio_worker(rx:mpsc::Receiver<AudioFrame>,clock:Arc<Mutex<Clock>>,stop:Arc<A
     if let Err(e)=run(){clock.lock().unwrap().error=Some(e);}
     clock.lock().unwrap().finished=true;
 }
+// Video is decoded as soon as it arrives, but broadcasters multiplex it ahead of
+// its audio by a service-specific delay (often over a second for low-bitrate SD).
+// Hold decoded frames by presentation time, not by a small frame count, so that
+// lead never overflows the hand-off channel. The frame cap bounds GPU memory.
+const QUEUE_AHEAD:f64=2.5;const QUEUE_FRAMES:usize=96;
+fn queue_has_room(len:usize,first_pts:Option<i64>,last_pts:Option<i64>)->bool{
+    len<QUEUE_FRAMES&&match(first_pts,last_pts){(Some(a),Some(b))=>((b-a) as f64/1e7)<QUEUE_AHEAD,_=>true}
+}
 fn clone_frame(f:&Frame)->Frame{Frame{texture:f.texture.clone(),display_aspect:f.display_aspect,pts:f.pts,duration:f.duration,interlaced:f.interlaced,top_first:f.top_first,bt709:f.bt709,full:f.full}}
 struct Displayed{frame:Frame,previous:Option<Frame>,next:Option<Frame>,field:u32}
 fn draw(renderer:&mut video::Renderer,window:&mut window::Window,displayed:&Displayed,settings:&control::Settings,state:&control::Shared)->Result<bool,String>{
@@ -139,18 +148,18 @@ pub fn play_options(path:String,runtime:control::Runtime,window_id:Option<u64>,i
     Ok(())
 }
 fn session(source:Arc<source::Source>,device:Arc<gpu_video::VulkanDevice>,window:&mut window::Window,renderer:&mut video::Renderer,state:control::Shared,target:Option<f64>)->Result<bool,Box<dyn std::error::Error>>{
-    let(tx,rx)=mpsc::sync_channel(12);let decode_device=device.clone();
+    let(tx,rx)=mpsc::sync_channel(32);let discarded=Arc::new(AtomicU64::new(0));let decode_device=device.clone();
     let(atx,arx)=mpsc::sync_channel(8);let clock=Arc::new(Mutex::new(Clock::default()));let stop=Arc::new(AtomicBool::new(false));
     let(c,s,r)=(clock.clone(),stop.clone(),state.clone());let audio=std::thread::spawn(move||audio_worker(arx,c,s,r));
-    let producer_state=state.clone();let producer_stop=stop.clone();let producer_source=source.clone();
-    let producer=std::thread::spawn(move||{if let Err(e)=produce(producer_source,producer_stop,decode_device,target,tx.clone(),atx,producer_state){let _=tx.send(Event::Error(e));}let _=tx.send(Event::End);});
+    let producer_state=state.clone();let producer_stop=stop.clone();let producer_source=source.clone();let producer_discarded=discarded.clone();
+    let producer=std::thread::spawn(move||{if let Err(e)=produce(producer_source,producer_stop,decode_device,target,tx.clone(),atx,producer_state,producer_discarded){let _=tx.send(Event::Error(e));}let _=tx.send(Event::End);});
     let mut frames:VecDeque<Frame>=VecDeque::new();let mut previous=None;let mut field=0;
     let mut displayed:Option<Displayed>=None;let mut revision=u64::MAX;let mut drawn_size=(0,0);let mut profile=None;let mut ended=false;let mut rendered=0;let mut late=0;let mut max_lateness=0f64;let mut wall=None;let began=Instant::now();let mut has_audio=true;
     let result=(||->Result<(),Box<dyn std::error::Error>>{
         loop{
             if window.closed()||state.lock().unwrap().seek_request.is_some(){break;}
             if let Some(e)=clock.lock().unwrap().error.clone(){return Err(e.into());}
-            while frames.len()<4&&!ended{
+            while !ended&&queue_has_room(frames.len(),frames.front().map(|f|f.pts),frames.back().map(|f|f.pts)){
                 match rx.try_recv(){
                     Ok(Event::Video(f))=>{wall.get_or_insert((f.pts as f64/1e7,Instant::now()));frames.push_back(f);},
                     Ok(Event::Error(e))=>return Err(e.into()),Ok(Event::End)=>ended=true,
@@ -216,7 +225,22 @@ fn session(source:Arc<source::Source>,device:Arc<gpu_video::VulkanDevice>,window
             }
             std::thread::sleep(Duration::from_millis(1));
         }
-        eprintln!("Native A/V: fields={rendered}, dropped={late}, maximum scheduling lateness={max_lateness:.3}s, elapsed={:.3}s",began.elapsed().as_secs_f64());Ok(())
+        eprintln!("Native A/V: fields={rendered}, dropped={late}, discarded before display={}, maximum scheduling lateness={max_lateness:.3}s, elapsed={:.3}s",discarded.load(Ordering::Relaxed),began.elapsed().as_secs_f64());Ok(())
     })();
     if result.is_err()||!ended||!frames.is_empty(){stop.store(true,Ordering::Relaxed);}drop(rx);let _=producer.join();let _=audio.join();result?;Ok(state.lock().unwrap().seek_request.is_some())
+}
+
+#[cfg(test)]
+mod queue_tests {
+    use super::*;
+    #[test]
+    fn broadcast_video_lead_does_not_overflow_display_queue() {
+        // A 29.97 Hz service muxed 1.5 s ahead of its audio needs about 45 frames queued.
+        let frame=333_667i64;
+        for len in 0..45{assert!(queue_has_room(len,Some(0),Some(len as i64*frame)),"{len}");}
+        // Time and GPU-memory bounds still apply.
+        assert!(!queue_has_room(76,Some(0),Some(76*frame)));
+        assert!(!queue_has_room(QUEUE_FRAMES,None,None));
+        assert!(queue_has_room(0,None,None));
+    }
 }

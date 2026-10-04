@@ -8,10 +8,10 @@ if command -v udevadm >/dev/null 2>&1; then
     udevadm control --reload-rules || true
 fi
 if command -v dkms >/dev/null 2>&1; then
-    dkms add -m open-volar-s -v 0.9.5 2>/dev/null || true
+    dkms add -m open-volar-s -v 0.9.6 2>/dev/null || true
     if [ -d "/lib/modules/$(uname -r)/build" ]; then
-        dkms build -m open-volar-s -v 0.9.5
-        dkms install -m open-volar-s -v 0.9.5
+        dkms build -m open-volar-s -v 0.9.6
+        dkms install -m open-volar-s -v 0.9.6
         # Upgrade an idle loaded module as well. Never force-unload an in-use tuner.
         if [ -d /sys/module/open_volar_s_usb ]; then
             if command -v systemctl >/dev/null 2>&1; then
