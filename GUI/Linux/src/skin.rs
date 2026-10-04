@@ -312,7 +312,7 @@ impl Skin {
         c.set_font_size(48.*BUTTON_FONT_RATIO);
         let required:Vec<_>=[("",false),("EPG",true),("",false),("AUDIO",false),("",false),("SETTINGS",true)]
             .into_iter().map(|(label,icon)|{
-                let text=c.text_extents(&i18n::text(label).to_uppercase()).map(|e|e.width()).unwrap_or(0.);
+                let text=c.text_extents(&i18n::upper(&i18n::text(label))).map(|e|e.width()).unwrap_or(0.);
                 (text+16.+if icon{48.*0.36+48./7.}else{0.}).max(52.)
             }).collect();
         let original:Vec<_>=buttons[9..].iter().map(|b|b.2).collect();
@@ -331,7 +331,7 @@ impl Skin {
             (Action::Stop,"STOP",126.),(Action::Record,"REC",180.),(Action::Fullscreen,"FULLSCREEN",249.)];
         let surface=ImageSurface::create(gtk::cairo::Format::ARgb32,1,1).unwrap();let c=Context::new(&surface).unwrap();
         c.select_font_face(ui_font(),FontSlant::Normal,FontWeight::Normal);c.set_font_size(46.*BUTTON_FONT_RATIO);
-        let measure=|label:&str|c.text_extents(&i18n::text(label).to_uppercase()).map(|e|e.width()).unwrap_or(0.);
+        let measure=|label:&str|c.text_extents(&i18n::upper(&i18n::text(label))).map(|e|e.width()).unwrap_or(0.);
         let required:Vec<f64>=specs.iter().map(|(a,label,_)|{
             let text=if *a==Action::Play{measure(label).max(measure("PAUSE"))}else if *a==Action::Record{measure(label).max(measure("REC ON"))}else{measure(label)};
             (text+46.*0.36+46./7.+24.).max(if matches!(a,Action::Previous|Action::Next){80.}else{52.})
@@ -348,7 +348,7 @@ impl Skin {
             (Action::Library,"LIBRARY",139.),(Action::Open,"OPEN",139.),(Action::Settings,"SETTINGS",123.)];
         let surface=ImageSurface::create(gtk::cairo::Format::ARgb32,1,1).unwrap();
         let c=Context::new(&surface).unwrap();c.select_font_face(ui_font(),FontSlant::Normal,FontWeight::Normal);c.set_font_size(46.*BUTTON_FONT_RATIO);
-        let measure=|label:&str|c.text_extents(&i18n::text(label).to_uppercase()).map(|e|e.width()).unwrap_or(0.);
+        let measure=|label:&str|c.text_extents(&i18n::upper(&i18n::text(label))).map(|e|e.width()).unwrap_or(0.);
         let required:Vec<f64>=specs.iter().map(|(a,label,_)|{
             let text=if *a==Action::Captions{measure(label).max(measure("CC ON"))}else{measure(label)};
             text+46.*0.36+46./7.+if *a==Action::Settings{36.}else{24.}
@@ -371,7 +371,7 @@ impl Skin {
             &["STOP"][..],&["REC","REC ON"][..],&["FULLSCREEN"][..]]) {
             assert!(x>=right&&x+width<=1133.,"DAC top row overflow");
             for label in labels {
-                let text=c.text_extents(&i18n::text(label).to_uppercase()).unwrap().width();
+                let text=c.text_extents(&i18n::upper(&i18n::text(label))).unwrap().width();
                 assert!(text+46.*0.36+46./7.+16.<=width,"Top caption does not fit: {label}");
             }
             assert_eq!(Self::dac_hit(1679,547,x+width/2.,355.),Some(action));right=x+width;
@@ -380,7 +380,7 @@ impl Skin {
         right=0.;
         for ((action,x,width),(label,icon)) in Self::viewer_buttons().into_iter().skip(9).zip([
             ("",false),("EPG",true),("",false),("AUDIO",false),("",false),("SETTINGS",true)]) {
-            let text=c.text_extents(&i18n::text(label).to_uppercase()).unwrap().width();
+            let text=c.text_extents(&i18n::upper(&i18n::text(label))).unwrap().width();
             assert!(x>=right&&x+width<=1553.,"Viewer buttons overlap or overflow");
             assert!(text+16.+(if icon{48.*0.36+48./7.}else{0.})<=width,"Viewer caption does not fit: {label}");
             assert_eq!(Self::hit(1600,1100,x+width/2.,1035.),Some(action));right=x+width;
@@ -388,7 +388,7 @@ impl Skin {
         c.set_font_size(46.*BUTTON_FONT_RATIO);
         let buttons=Self::dac_bottom();let mut right=0.;
         for ((action,x,width),label) in buttons.into_iter().zip(["GUIDE","SNAPSHOT","AUDIO","CC OFF","LIBRARY","OPEN","SETTINGS"]){
-            let text=c.text_extents(&i18n::text(label).to_uppercase()).unwrap().width();
+            let text=c.text_extents(&i18n::upper(&i18n::text(label))).unwrap().width();
             assert!(x>=right&&x+width<=1133.,"Button bounds overlap or overflow: {label} at {x} width {width}");
             assert!(text+46.*0.36+46./7.+16.<=width,"Full translation does not fit: {label}");
             assert_eq!(Self::dac_hit(1679,547,x+width/2.,452.),Some(action));right=x+width;
@@ -533,7 +533,7 @@ impl Skin {
     fn color(c:&Context,r:f64,g:f64,b:f64) {c.set_source_rgb(r/255.,g/255.,b/255.);}
     fn button_contents(&self,c:&Context,x:f64,y:f64,w:f64,h:f64,label:&str,icon:&str,ink:(f64,f64,f64)){
         let text_h=h.min(48.);
-        let translated=i18n::text(label).to_uppercase();
+        let translated=i18n::upper(&i18n::text(label));
         let icon_size=if icon.is_empty(){0.}else{text_h*0.36};
         let gap=if icon.is_empty()||translated.is_empty(){0.}else{text_h/7.};
         let available=(w-16.-icon_size-gap).max(1.);
@@ -707,7 +707,7 @@ impl Skin {
 
         }
         self.art(c,if state.live{"live-green-on"}else{"live-green-off"},1433.,by(953.),16.,16.);
-        Self::text(c,&i18n::text("Live").to_uppercase(),1461.,by(967.),14.,true);
+        Self::text(c,&i18n::upper(&i18n::text("Live")),1461.,by(967.),14.,true);
         // Match the native Windows 35%-of-control caption glyphs.
         Self::color(c,240.,226.,203.);c.set_line_width(1.5);
         let size=11.;let cy=28.;
