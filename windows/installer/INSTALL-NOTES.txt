@@ -1,4 +1,4 @@
-Open Volar S 0.9.6
+Open Volar S 0.9.7
 
 Version 0.9.5 adds standard BDA discovery registration for x64 and x86 clients,
 numeric channel ordering, and a Windows installer build from Linux. Linux also
