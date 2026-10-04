@@ -410,7 +410,7 @@ impl Skin {
         if dx*dx+dy*dy<16. || (bounded && dx*dx+dy*dy>145.*145.){return None;}
         Some(dy.atan2(dx))
     }
-    pub fn draw_deck(&self,c:&Context,width:i32,height:i32,channel:&str,channel_number:usize,
+    pub fn draw_deck(&self,c:&Context,width:i32,height:i32,channel:&str,programme:Option<&str>,channel_number:usize,
         status:&str,playing:bool,recording:bool,volume:i32,paused:bool,captions:bool,audio_mode:usize,quality:Option<u8>){
         let sx=width as f64/1679.;let sy=height as f64/547.;
         c.set_operator(gtk::cairo::Operator::Source);
@@ -435,7 +435,16 @@ impl Skin {
         Self::text(c,&format!("{:02}",channel_number),100.,188.,44.,true);
         Self::color(c,97.,70.,50.);c.rectangle(181.,121.,1.,75.);let _=c.fill();
         let title:String=channel.chars().take(30).collect();
-        Self::text(c,&title,207.,151.,26.,true);
+        // Program on now beneath the channel name, as on the Windows DAC display.
+        match programme.filter(|p|!p.is_empty()){
+            Some(programme)=>{
+                Self::text(c,&title,207.,144.,26.,true);
+                let mut line:String=programme.chars().take(48).collect();if programme.chars().count()>48{line.push('…');}
+                c.select_font_face(ui_font(),FontSlant::Normal,FontWeight::Normal);c.set_font_size(16.);
+                Self::color(c,188.,169.,152.);c.move_to(207.,169.);let _=c.show_text(&line);
+            }
+            None=>Self::text(c,&title,207.,151.,26.,true),
+        }
         self.tinted_art(c,"dac-signal",207.,181.,19.,19.,183.,164.,116.);
         Self::text(c,&quality.map(|value|format!("SIGNAL QUALITY: {value}%")).unwrap_or_else(||"SIGNAL QUALITY: —".into()),233.,196.,15.,false);
         self.tinted_art(c,"dac-channel-face",685.,132.,50.,53.,58.,42.,29.);

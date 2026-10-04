@@ -330,6 +330,10 @@ impl State{
     }
     fn poll(&mut self){
         if let Some(job)=&self.job {self.guide.ingest(&job.control.snapshot()["epg"]);}
+        // Like Windows, fill in the program title and signal while the channel banner is showing.
+        if self.channel_digits.is_empty()&&self.channel_osd_until.is_some_and(|t|Instant::now()<t)&&self.channel_osd.starts_with(&self.channel_label()){
+            let text=self.channel_osd_text();if text!=self.channel_osd{self.channel_osd=text;}
+        }
         let mut index=0;
         while index<self.exports.len(){
             if let Ok(result)=self.exports[index].result.try_recv(){
@@ -622,6 +626,23 @@ impl State{
         self.volume_osd_until=Some(Instant::now()+Duration::from_secs(3));
         if persist{self.save_config();}
     }
+    fn channel_label(&self)->String{
+        let service=self.services.get(self.service_index);
+        format!("{} – {}",interaction::channel_number(service,self.service_index),service.and_then(|s|s["name"].as_str()).unwrap_or("TV"))
+    }
+    /// Program on now, from the live guide (as on Windows); none for files and scans.
+    fn current_programme(&self)->Option<String>{
+        let job=self.job.as_ref().filter(|j|j.kind!=JobKind::Discover)?;
+        if self.file_player.is_some(){return None;}
+        let program=self.current_program_id();
+        a865r_media::guide_data::current_title(&job.control.snapshot()["epg"],self.frequency_khz,program)
+    }
+    fn channel_osd_text(&self)->String{
+        let quality=self.job.as_ref().and_then(|j|j.control.snapshot()["signal_quality_percent"].as_u64())
+            .map(|q|format!("{}%",q.min(100))).unwrap_or_else(||"—".into());
+        let signal=i18n::text(&format!("Signal quality: {quality}"));
+        match self.current_programme(){Some(title)=>format!("{}\n{title}\n{signal}",self.channel_label()),None=>format!("{}\n{signal}",self.channel_label())}
+    }
     fn show_channel(&mut self,message:String){
         self.channel_osd=message;self.channel_osd_until=Some(Instant::now()+Duration::from_secs(3));
     }
@@ -630,11 +651,9 @@ impl State{
             self.show_channel("Channel selection\nStop recording or scanning first".into());return;
         }
         let Some(service)=self.services.get(index) else{return;};
-        let number=service["channel_number"].as_u64().unwrap_or(index as u64+1);
-        let name=service["name"].as_str().unwrap_or("TV").to_owned();
         self.frequency_khz=service["frequency_khz"].as_u64().unwrap_or(self.frequency_khz as u64) as u32;
         self.service_index=index;self.has_frequency=true;self.frequency_saved=false;
-        self.watch();self.save_config();self.show_channel(format!("{number} – {name}\nSignal quality: —"));
+        self.watch();self.save_config();self.show_channel(self.channel_osd_text());
     }
     fn commit_channel(&mut self){
         self.channel_deadline=None;
@@ -1840,7 +1859,8 @@ fn receiver_dialog(state:Rc<RefCell<State>>,window:&ApplicationWindow) {
         let recording=s.recording_path.is_some()||s.job.as_ref().is_some_and(|j|j.kind==JobKind::Record);
         let quality=s.job.as_ref().and_then(|job|job.control.snapshot()["signal_quality_percent"].as_u64())
             .map(|value|value.min(100) as u8);
-        s.skin.draw_deck(c,a.width(),a.height(),channel,s.services.get(s.service_index).and_then(|v|v["channel_number"].as_u64()).unwrap_or(s.service_index as u64+1) as usize,
+        let programme=s.current_programme().or_else(||s.file_player.is_some().then(||i18n::text("RECORDING")));
+        s.skin.draw_deck(c,a.width(),a.height(),channel,programme.as_deref(),s.services.get(s.service_index).and_then(|v|v["channel_number"].as_u64()).unwrap_or(s.service_index as u64+1) as usize,
             &s.status,playing,recording,s.volume,s.paused,s.captions,s.audio_mode,quality);
         glib::Propagation::Proceed
     });
@@ -2026,7 +2046,12 @@ fn activate(app:&Application,initial:Option<u32>)->(ApplicationWindow,Rc<RefCell
     state.borrow_mut().window_id=video.window().map(|w|unsafe{
         gdk_x11_window_get_xid((w.to_glib_none() as gtk::glib::translate::Stash<'_,*mut gtk::gdk::ffi::GdkWindow,gtk::gdk::Window>).0 as *mut c_void)
     }).unwrap_or(0);
-    if initial.is_some(){state.borrow_mut().watch();}
+    // Like Windows, start playing the tuned channel at launch (not in previews or tests).
+    let preview=cfg!(test)||std::env::var_os("OPEN_VOLAR_S_PREVIEW_SETTINGS").is_some();
+    if initial.is_some()||(!preview&&state.borrow().has_frequency){
+        let mut s=state.borrow_mut();s.watch();
+        if s.job.is_some()&&!s.services.is_empty(){let text=s.channel_osd_text();s.show_channel(text);}
+    }
     let st=state.clone();let draw=area.clone();
     glib::timeout_add_local(Duration::from_millis(1000),move||{
         st.borrow_mut().poll();draw.queue_draw();glib::ControlFlow::Continue

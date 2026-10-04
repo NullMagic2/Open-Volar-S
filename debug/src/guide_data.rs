@@ -11,6 +11,14 @@ pub fn events(stats:&a865r::TsStats,frequency:u32)->Value {
         "minimum_age":e.minimum_age,"running":e.running,"following":e.following,"language":e.language
     })).collect::<Vec<_>>())
 }
+/// Title of the program on now, shared by the Windows and Linux interfaces.
+pub fn current_title(events:&Value,frequency:u32,program:u32)->Option<String>{
+    events.as_array()?.iter().filter(|e|e["frequency_khz"].as_u64()==Some(frequency as u64)
+        && e["program_id"].as_u64()==Some(program as u64) && e["running"]==true && e["following"]!=true
+        && e["name"].as_str().is_some_and(|s|!s.trim().is_empty()))
+        .max_by_key(|e|e["start"].as_i64().unwrap_or(0))
+        .and_then(|e|e["name"].as_str()).map(|s|s.split_whitespace().collect::<Vec<_>>().join(" "))
+}
 pub fn station(v:&Value)->String {format!("{} – {}",v["channel_number"].as_u64().map(|v|v.to_string()).unwrap_or_else(||"—".into()),v["channel_name"].as_str().unwrap_or("TV"))}
 pub fn date(seconds:i64)->String {
     let days=seconds.div_euclid(86400);let time=seconds.rem_euclid(86400);let z=days+719468;
@@ -19,7 +27,13 @@ pub fn date(seconds:i64)->String {
     format!("{day:02}/{month:02} {:02}:{:02}",time/3600,time/60%60)
 }
 pub fn range(v:&Value)->String {let start=v["start"].as_i64().unwrap_or(0);format!("{} – {}",date(start),date(start.saturating_add(v["duration"].as_i64().unwrap_or(0))))}
-pub fn detail(v:&Value)->String {format!("{}\n{}\n{}\n{}\n\n{}",station(v),range(v),v["name"].as_str().unwrap_or(""),v["minimum_age"].as_u64().map(|v|format!("{v}+")).unwrap_or_default(),v["description"].as_str().unwrap_or(""))}
+/// Same layout as the Windows guide's detail pane, plus the age rating when broadcast.
+pub fn detail(v:&Value,untitled:&str,undescribed:&str)->String {
+    let name=v["name"].as_str().filter(|n|!n.trim().is_empty()).unwrap_or(untitled);
+    let description=v["description"].as_str().filter(|d|!d.trim().is_empty()).unwrap_or(undescribed);
+    let age=v["minimum_age"].as_u64().map(|a|format!("\n{a}+")).unwrap_or_default();
+    format!("{name}\n{}\n{}{age}\n\n{description}",station(v),range(v))
+}
 pub struct Cache {pub events:Vec<Value>,pub revision:u64,path:PathBuf,last:Value}
 impl Cache {
     pub fn load(path:PathBuf)->Self {
@@ -43,8 +57,15 @@ impl Cache {
             if let Ok(bytes)=serde_json::to_vec(&self.events){if std::fs::write(&tmp,bytes).is_ok(){let _=std::fs::rename(&tmp,&self.path);}}
         }changed
     }
-    pub fn current_title(&self,frequency:u32,program:u32)->Option<String>{self.events.iter().filter(|e|number(e,"frequency_khz")==frequency as u64&&number(e,"program_id")==program as u64&&e["running"]==true&&e["following"]!=true).max_by_key(|e|e["start"].as_i64().unwrap_or(0)).and_then(|e|e["name"].as_str()).map(|s|s.split_whitespace().collect::<Vec<_>>().join(" "))}
+    pub fn current_title(&self,frequency:u32,program:u32)->Option<String>{current_title(&json!(self.events),frequency,program)}
 }
 #[cfg(test)]mod tests {use super::*;
- #[test]fn updates_survive_restart_and_do_not_merge_different_multiplexes(){let p=std::env::temp_dir().join(format!("ovs-guide-{}.json",std::process::id()));let _=std::fs::remove_file(&p);let mut c=Cache::load(p.clone());let mut a=json!({"frequency_khz":1,"program_id":2,"event_id":3,"start":100,"name":"First","running":true});assert!(c.ingest(&json!([a])));a["frequency_khz"]=json!(2);assert!(c.ingest(&json!([a])));a["name"]=json!("Updated");assert!(c.ingest(&json!([a])));assert_eq!(c.events.len(),2);assert!(!c.ingest(&json!([])));let c=Cache::load(p.clone());assert_eq!(c.current_title(2,2).as_deref(),Some("Updated"));assert!(detail(&c.events[1]).contains("Updated"));let _=std::fs::remove_file(p);}
+ #[test]fn current_title_ignores_next_untitled_and_other_services(){let events=json!([
+  {"frequency_khz":1,"program_id":2,"name":"Old","running":true,"start":1},
+  {"frequency_khz":1,"program_id":2,"name":"  Current\nshow ","running":true,"start":2},
+  {"frequency_khz":1,"program_id":2,"name":" ","running":true,"start":3},
+  {"frequency_khz":1,"program_id":2,"name":"Next","running":true,"following":true,"start":4},
+  {"frequency_khz":9,"program_id":2,"name":"Other multiplex","running":true,"start":5}]);
+  assert_eq!(current_title(&events,1,2).as_deref(),Some("Current show"));assert_eq!(current_title(&events,1,3),None);assert_eq!(current_title(&Value::Null,1,2),None);}
+ #[test]fn updates_survive_restart_and_do_not_merge_different_multiplexes(){let p=std::env::temp_dir().join(format!("ovs-guide-{}.json",std::process::id()));let _=std::fs::remove_file(&p);let mut c=Cache::load(p.clone());let mut a=json!({"frequency_khz":1,"program_id":2,"event_id":3,"start":100,"name":"First","running":true});assert!(c.ingest(&json!([a])));a["frequency_khz"]=json!(2);assert!(c.ingest(&json!([a])));a["name"]=json!("Updated");assert!(c.ingest(&json!([a])));assert_eq!(c.events.len(),2);assert!(!c.ingest(&json!([])));let c=Cache::load(p.clone());assert_eq!(c.current_title(2,2).as_deref(),Some("Updated"));assert!(detail(&c.events[1],"","").starts_with("Updated\n"));let _=std::fs::remove_file(p);}
 }
