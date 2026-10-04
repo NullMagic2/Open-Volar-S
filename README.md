@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <strong>Windows 10 / 11 and Linux x86_64</strong> · <strong>Rust</strong> · <strong>0.9.6</strong>
+  <strong>Windows 10 / 11 and Linux x86_64</strong> · <strong>Rust</strong> · <strong>0.9.8-3</strong>
 </p>
 
 <p align="center">
