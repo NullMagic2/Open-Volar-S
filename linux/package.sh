@@ -61,6 +61,7 @@ for name in COMPATIBILITY.md THIRD_PARTY.md; do
   install -m644 "$ROOT/$name" "$PAYLOAD/$name"
 done
 install -m644 "$ROOT/docs/NATIVE-LINUX-PLAYER.md" "$PAYLOAD/NATIVE-LINUX-PLAYER.md"
+install -m644 "$ROOT/docs/XFCE-WINDOW-FIX.md" "$PAYLOAD/XFCE-WINDOW-FIX.md"
 
 build_deb() {
   command -v dpkg-deb >/dev/null || { echo 'dpkg-deb is required.' >&2; exit 1; }
@@ -81,7 +82,7 @@ build_deb() {
   ln -s LICENSES.md "$stage/usr/share/doc/open-volar-s/copyright"
     install -Dm644 "$PAYLOAD/selawk.ttf" "$stage/usr/share/fonts/truetype/open-volar-s/selawk.ttf"
   install -Dm644 "$PAYLOAD/selawksb.ttf" "$stage/usr/share/fonts/truetype/open-volar-s/selawksb.ttf"
-  for name in COMPATIBILITY.md THIRD_PARTY.md NATIVE-LINUX-PLAYER.md; do
+  for name in COMPATIBILITY.md THIRD_PARTY.md NATIVE-LINUX-PLAYER.md XFCE-WINDOW-FIX.md; do
     install -Dm644 "$PAYLOAD/$name" "$stage/usr/share/doc/open-volar-s/$name"
   done
   mkdir -p "$source_dir" "$stage/DEBIAN"
@@ -168,7 +169,7 @@ install -Dm644 LICENSES.md %{buildroot}/usr/share/doc/open-volar-s/LICENSES.md
 install -Dm644 selawk.ttf %{buildroot}/usr/share/fonts/truetype/open-volar-s/selawk.ttf
 install -Dm644 selawksb.ttf %{buildroot}/usr/share/fonts/truetype/open-volar-s/selawksb.ttf
 
-for name in COMPATIBILITY.md THIRD_PARTY.md NATIVE-LINUX-PLAYER.md; do
+for name in COMPATIBILITY.md THIRD_PARTY.md NATIVE-LINUX-PLAYER.md XFCE-WINDOW-FIX.md; do
   install -Dm644 "\$name" "%{buildroot}/usr/share/doc/open-volar-s/\$name"
 done
 
@@ -210,6 +211,7 @@ $source_dir/70-open-volar-s.rules
 /usr/share/doc/open-volar-s/COMPATIBILITY.md
 /usr/share/doc/open-volar-s/THIRD_PARTY.md
 /usr/share/doc/open-volar-s/NATIVE-LINUX-PLAYER.md
+/usr/share/doc/open-volar-s/XFCE-WINDOW-FIX.md
 /usr/share/doc/open-volar-s/LICENSES.md
 /usr/share/fonts/truetype/open-volar-s/selawk.ttf
 /usr/share/fonts/truetype/open-volar-s/selawksb.ttf
