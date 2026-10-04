@@ -2577,7 +2577,7 @@ unsafe fn run() -> windows::core::Result<()> {
     let video = CreateWindowExW(
         WINDOW_EX_STYLE(0),
         class,
-        w!("Live TV! — 0.9.7 • Vulkan preview"),
+        w!("Live TV! — 0.9.8 • Vulkan preview"),
         WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN,
         80,
         50,
