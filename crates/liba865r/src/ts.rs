@@ -166,7 +166,7 @@ impl TsAnalyzer {
             let sections = self
                 .sections
                 .entry(pid)
-                .or_default()
+                .or_insert_with(|| SectionAssembler::for_pid(pid))
                 .push(payload, payload_unit_start);
             for section in sections {
                 if crc32_mpeg(&section) != 0 {
@@ -348,11 +348,21 @@ fn packet_payload(packet: &[u8], adaptation_control: u8) -> Option<&[u8]> {
     }
 }
 
-#[derive(Default)]
 struct SectionAssembler {
     pending: Vec<u8>,
+    /// PSI sections are at most 1024 bytes; private sections such as EIT
+    /// schedules may be up to 4096 bytes.
+    max: usize,
+}
+impl Default for SectionAssembler {
+    fn default() -> Self {
+        Self { pending: Vec::new(), max: 1024 }
+    }
 }
 impl SectionAssembler {
+    fn for_pid(pid: u16) -> Self {
+        Self { pending: Vec::new(), max: if pid == 0x12 { 4096 } else { 1024 } }
+    }
     fn feed(&mut self, mut bytes: &[u8], allow_new: bool, output: &mut Vec<Vec<u8>>) {
         while !bytes.is_empty() {
             if self.pending.is_empty() && (!allow_new || bytes[0] == 0xff) {
@@ -362,7 +372,7 @@ impl SectionAssembler {
                 3 - self.pending.len()
             } else {
                 let total = 3 + (((self.pending[1] & 15) as usize) << 8) + self.pending[2] as usize;
-                if !(8..=1024).contains(&total) {
+                if !(8..=self.max).contains(&total) {
                     self.pending.clear();
                     break;
                 }
@@ -373,7 +383,7 @@ impl SectionAssembler {
             bytes = &bytes[take..];
             if self.pending.len() >= 3 {
                 let total = 3 + (((self.pending[1] & 15) as usize) << 8) + self.pending[2] as usize;
-                if !(8..=1024).contains(&total) {
+                if !(8..=self.max).contains(&total) {
                     self.pending.clear();
                     break;
                 }
@@ -605,6 +615,48 @@ mod tests {
         second.extend_from_slice(&a[183..]);
         second.extend_from_slice(&b);
         assert_eq!(assembler.push(&second, true), vec![a, b]);
+    }
+    #[test]
+    fn eit_schedule_sections_longer_than_psi_limit_are_assembled() {
+        // A schedule section with several described events exceeds 1024 bytes.
+        let mut s = vec![0x50, 0, 0, 0x42, 0x40, 0xc1, 0, 0, 0, 1, 0, 2, 0, 0x50];
+        for n in 0..6u8 {
+            let text = vec![b'a' + n; 240];
+            let mut d = vec![0x4d, 0, b'p', b'o', b'r', 4, b'S', b'h', b'o', b'w'];
+            d.push(text.len() as u8);
+            d.extend_from_slice(&text);
+            d[1] = (d.len() - 2) as u8;
+            s.extend([0, n, 0xe8, 0x7d, n, 0, 0, 0, 0x30, 0, 0, d.len() as u8]);
+            s.extend(d);
+        }
+        let length = s.len() + 4 - 3;
+        s[1] = 0xf0 | (length >> 8) as u8;
+        s[2] = length as u8;
+        let crc = crc32_mpeg(&s);
+        s.extend_from_slice(&crc.to_be_bytes());
+        assert!(s.len() > 1024);
+        let mut payload = vec![0];
+        payload.extend_from_slice(&s);
+        let mut bytes = Vec::new();
+        for (cc, chunk) in payload.chunks(184).enumerate() {
+            let mut p = vec![0xff; 188];
+            p[..4].copy_from_slice(&[0x47, if cc == 0 { 0x40 } else { 0 }, 0x12, 0x10 | (cc as u8 & 15)]);
+            p[4..4 + chunk.len()].copy_from_slice(chunk);
+            bytes.extend_from_slice(&p);
+        }
+        let mut a = TsAnalyzer::new();
+        a.push(&bytes);
+        let stats = a.finish();
+        assert_eq!(stats.psi_crc_errors, 0);
+        assert_eq!(stats.events.len(), 6);
+        assert!(stats.events.values().all(|e| e.name == "Show" && e.description.len() == 240));
+        // PSI tables keep the 1024-byte limit.
+        let mut psi = SectionAssembler::for_pid(0);
+        let long = section(1100);
+        let mut first = vec![0];
+        first.extend_from_slice(&long[..183]);
+        assert!(psi.push(&first, true).is_empty());
+        assert!(psi.pending.is_empty());
     }
     #[test]
     fn crc_detects_corruption_and_reassembly_waits_for_start() {
