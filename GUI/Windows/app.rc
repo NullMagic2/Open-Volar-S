@@ -12,8 +12,8 @@ BEGIN
       VALUE "FileDescription", "Live TV! - Orbit TV receiver\0"
       VALUE "ProductName", "Live TV!\0"
       VALUE "CompanyName", "Open Volar S contributors\0"
-      VALUE "FileVersion", "0.9.5 Orbit\0"
-      VALUE "ProductVersion", "0.9.5 Orbit\0"
+      VALUE "FileVersion", "0.9.6 Orbit\0"
+      VALUE "ProductVersion", "0.9.6 Orbit\0"
       VALUE "OriginalFilename", "live-tv.exe\0"
     END
   END
