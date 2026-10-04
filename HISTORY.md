@@ -2,6 +2,23 @@
 
 This is a short map of the project's changes. [README.md](README.md) and [BUILD-SOURCE.md](BUILD-SOURCE.md) are the current usage and build instructions. The linked validation reports preserve measurements, test scope, and limitations from earlier alpha releases.
 
+## 0.9.6 – 0.9.8-3
+
+Releases are 0.9.7 and 0.9.8-3. The 0.9.8 and 0.9.8-2 packages were interim test builds; their changes are included in 0.9.8-3.
+
+- **0.9.8-3** (Linux package revision; application, DKMS driver and Windows remain 0.9.8)
+  - Greek labels shown in capitals drop the tonos, and a tonos that separated two vowels becomes a diaeresis (`ρολόι` → `ΡΟΛΟΪ`), on Windows and Linux.
+  - Windows program guide shows the same columns as Linux: Channel, Start, End, Program, Status and Age rating.
+  - *Interim 0.9.8-2:* the open guide is no longer rebuilt while being read; when the program on now changes, only its Status is updated in place. Repeated reception no longer counts as a guide change. Age rating is centered.
+  - *Interim 0.9.8:* saved guides no longer show an old program as on now; the program on now is revealed once when the guide opens or its filter changes. Linux shows the channel banner again at the first frame, and both platforms show it once more when the program title arrives.
+- **0.9.7**
+  - Complete daily guide schedules on Windows and Linux: EIT sections up to 4096 bytes are no longer discarded.
+  - Linux guide aligned with Windows: US spelling, Windows strings and detail layout, columns that fit the window, and the program on now selected.
+  - Linux shows the program on now on the DAC display and in the channel banner, and starts playing the saved channel at launch, as Windows does.
+- **0.9.6**
+  - Native Linux playback no longer drops decoded frames on services whose video is multiplexed well ahead of its audio, typically low-bitrate SD.
+  - LiveTV window activation on XFCE brings the viewer and DAC forward together ([details](docs/XFCE-WINDOW-FIX.md)).
+
 ## Combined Windows and Linux source (0.8.0-alpha.43)
 
 - One Cargo workspace and lockfile now build the shared Rust receiver, CLI, and Debug Desk for Windows or Linux. Platform code is under [`windows/`](windows/) and [`linux/`](linux/).
