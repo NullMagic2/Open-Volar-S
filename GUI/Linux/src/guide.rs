@@ -24,33 +24,43 @@ pub(super) fn show(state:Rc<RefCell<State>>,owner:&ApplicationWindow){
     close_art.connect_draw(move|w,c|{let a=w.allocation();st.borrow().skin.draw_caption_close(c,a.width(),a.height());glib::Propagation::Proceed});
     let p=panel.clone();close.connect_clicked(move|_|p.close());bar.pack_end(&close,false,false,10);frame.pack_start(&bar,false,false,0);
     let body=gtk::Box::new(Orientation::Vertical,10);body.style_context().add_class("guide-well");frame.pack_start(&body,true,true,0);overlay.add_overlay(&frame);
-    let filter=ComboBoxText::new();filter.append(Some("all"),&i18n::text("All channels"));filter.set_active_id(Some("all"));body.pack_start(&filter,false,false,0);
+    let filter=ComboBoxText::new();filter.append(Some("all"),&i18n::text("All received channels"));filter.set_active_id(Some("all"));body.pack_start(&filter,false,false,0);
     let store=gtk::ListStore::new(&[String::static_type(),String::static_type(),String::static_type(),String::static_type(),String::static_type(),String::static_type(),u32::static_type()]);
     let tree=gtk::TreeView::with_model(&store);tree.set_headers_visible(true);tree.set_vexpand(true);
-    for (i,title) in ["Channel","Start","End","Programme","Status","Age rating"].iter().enumerate(){let renderer=gtk::CellRendererText::new();let column=gtk::TreeViewColumn::new();column.set_title(&i18n::text(title));gtk::prelude::TreeViewColumnExt::pack_start(&column,&renderer,true);gtk::prelude::TreeViewColumnExt::add_attribute(&column,&renderer,"text",i as i32);column.set_resizable(true);if i==3{column.set_expand(true);}tree.append_column(&column);}
-    let scroll=gtk::ScrolledWindow::new(None::<&gtk::Adjustment>,None::<&gtk::Adjustment>);scroll.add(&tree);body.pack_start(&scroll,true,true,0);
+    // Columns always fit the window: channel and program names are ellipsized
+    // rather than pushing Status and Age rating out of view.
+    for (i,title) in ["Channel","Start","End","Program","Status","Age rating"].iter().enumerate(){let renderer=gtk::CellRendererText::new();let column=gtk::TreeViewColumn::new();column.set_title(&i18n::text(title));gtk::prelude::TreeViewColumnExt::pack_start(&column,&renderer,true);gtk::prelude::TreeViewColumnExt::add_attribute(&column,&renderer,"text",i as i32);
+        if i==0||i==3{renderer.set_ellipsize(gtk::pango::EllipsizeMode::End);renderer.set_width_chars(if i==0{22}else{16});}
+        if i==3{column.set_expand(true);}tree.append_column(&column);}
+    let scroll=gtk::ScrolledWindow::new(None::<&gtk::Adjustment>,None::<&gtk::Adjustment>);scroll.set_policy(gtk::PolicyType::Never,gtk::PolicyType::Automatic);scroll.add(&tree);body.pack_start(&scroll,true,true,0);
     let details=gtk::TextView::new();details.set_editable(false);details.set_cursor_visible(false);details.set_wrap_mode(gtk::WrapMode::WordChar);details.set_left_margin(12);details.set_right_margin(12);details.set_top_margin(10);details.set_bottom_margin(10);
     let detail_scroll=gtk::ScrolledWindow::new(None::<&gtk::Adjustment>,None::<&gtk::Adjustment>);detail_scroll.set_min_content_height(150);detail_scroll.add(&details);body.pack_start(&detail_scroll,false,true,0);
-    let info=i18n::label("Programme information is received while watching TV.");info.set_xalign(0.);info.set_line_wrap(true);info.style_context().add_class("guide-footer");body.pack_start(&info,false,false,0);
+    let info=i18n::label("Times as broadcast • Guide updates while watching");info.set_xalign(0.);info.set_line_wrap(true);info.style_context().add_class("guide-footer");body.pack_start(&info,false,false,0);
     let grip=EventBox::new();grip.set_visible_window(false);grip.set_halign(gtk::Align::End);grip.set_valign(gtk::Align::End);
     let mark=Label::new(Some("◢"));mark.style_context().add_class("guide-grip");grip.add(&mark);grip.set_size_request(18,18);
     let p=panel.clone();grip.connect_button_press_event(move|_,ev|{if ev.button()==1{p.begin_resize_drag(gdk::WindowEdge::SouthEast,1,ev.root().0 as i32,ev.root().1 as i32,ev.time());}glib::Propagation::Stop});overlay.add_overlay(&grip);
     let rows=Rc::new(RefCell::new(Vec::<Value>::new()));let chosen=rows.clone();let buffer=details.buffer().unwrap();
-    tree.selection().connect_changed(move|selection|{if let Some((model,it))=selection.selected(){if let Ok(n)=model.value(&it,6).get::<u32>(){if let Some(v)=chosen.borrow().get(n as usize){buffer.set_text(&guide_data::detail(v));}}}});
+    tree.selection().connect_changed(move|selection|{if let Some((model,it))=selection.selected(){if let Ok(n)=model.value(&it,6).get::<u32>(){if let Some(v)=chosen.borrow().get(n as usize){buffer.set_text(&guide_data::detail(v,&i18n::text("Program title not provided"),&i18n::text("No description supplied by the broadcaster.")));}}}});
     let st=state.clone();let chosen=rows.clone();tree.connect_row_activated(move|view,path,_|{let Some(model)=view.model()else{return};let Some(it)=model.iter(path)else{return};let Ok(n)=model.value(&it,6).get::<u32>()else{return};if let Some(v)=chosen.borrow().get(n as usize){let mut s=st.borrow_mut();if let Some(i)=s.services.iter().position(|c|c["frequency_khz"]==v["frequency_khz"]&&c["program_id"]==v["program_id"]){s.select_channel(i);}}});
-    panel.add(&overlay);panel.show_all();let weak=panel.downgrade();let mut last=None;let mut stations=Vec::<(String,String)>::new();
+    panel.add(&overlay);panel.show_all();let weak=panel.downgrade();let mut last=None;let mut stations=Vec::<(String,String)>::new();let mut last_filter=None::<String>;
     glib::timeout_add_local(Duration::from_millis(250),move||{
         if weak.upgrade().is_none_or(|p|!p.is_visible()){return glib::ControlFlow::Break}
         let s=state.borrow();let selection=filter.active_id().map(|s|s.to_string()).unwrap_or_else(||"all".into());
         let signature=(s.guide.revision,selection.clone());if last.as_ref()==Some(&signature){return glib::ControlFlow::Continue}last=Some(signature);
         let mut channels=s.guide.events.clone();channels.sort_by_key(|v|(v["channel_number"].as_u64().unwrap_or(u64::MAX),v["channel_name"].as_str().unwrap_or("").to_owned()));
         let mut updated=Vec::new();for v in &channels{let id=format!("{}:{}",v["frequency_khz"],v["program_id"]);if !updated.iter().any(|(key,_)|key==&id){updated.push((id,guide_data::station(v)));}}
-        if stations!=updated {filter.remove_all();filter.append(Some("all"),&i18n::text("All channels"));for (id,label) in &updated{filter.append(Some(id),label);}if !filter.set_active_id(Some(&selection)){filter.set_active_id(Some("all"));}stations=updated;}
+        if stations!=updated {filter.remove_all();filter.append(Some("all"),&i18n::text("All received channels"));for (id,label) in &updated{filter.append(Some(id),label);}if !filter.set_active_id(Some(&selection)){filter.set_active_id(Some("all"));}stations=updated;}
         let selected=tree.selection().selected().and_then(|(m,it)|m.value(&it,6).get::<u32>().ok()).and_then(|i|rows.borrow().get(i as usize).map(guide_data::key));
+        let refilter=last_filter.as_deref()!=Some(selection.as_str());last_filter=Some(selection.clone());
+        let selected=if refilter{None}else{selected};
         let events:Vec<_>=s.guide.events.iter().filter(|v|selection=="all"||format!("{}:{}",v["frequency_khz"],v["program_id"])==selection).cloned().collect();
         store.clear();*rows.borrow_mut()=events.clone();for (i,v) in events.iter().enumerate(){let start=v["start"].as_i64().unwrap_or(0);let end=start.saturating_add(v["duration"].as_i64().unwrap_or(0));let status=if v["following"]==true{"Next"}else if v["running"]==true{"Now"}else{""};let age=v["minimum_age"].as_u64().map(|v|format!("{v}+")).unwrap_or_default();
-            let it=store.insert_with_values(None,&[(0,&guide_data::station(v)),(1,&guide_data::date(start)),(2,&guide_data::date(end)),(3,&v["name"].as_str().unwrap_or("")),(4,&i18n::text(status)),(5,&age),(6,&(i as u32))]);if selected==Some(guide_data::key(v)){tree.selection().select_iter(&it);}}
-        if events.is_empty(){i18n::set_label(&info,"No programme information available.");}else{i18n::set_label(&info,"Programme information is received while watching TV.");}glib::ControlFlow::Continue
+            let it=store.insert_with_values(None,&[(0,&guide_data::station(v)),(1,&guide_data::date(start)),(2,&guide_data::date(end)),(3,&v["name"].as_str().filter(|n|!n.trim().is_empty()).map(str::to_owned).unwrap_or_else(||i18n::text("Program title not provided"))),(4,&i18n::text(status)),(5,&age),(6,&(i as u32))]);if selected==Some(guide_data::key(v)){tree.selection().select_iter(&it);}}
+        if tree.selection().count_selected_rows()==0{
+            let index=events.iter().position(|v|v["running"]==true&&v["following"]!=true).unwrap_or(0);
+            if let Some(it)=store.iter_nth_child(None,index as i32){tree.selection().select_iter(&it);if let Some(path)=store.path(&it){tree.scroll_to_cell(Some(&path),None::<&gtk::TreeViewColumn>,true,0.3,0.);}}
+        }
+        if events.is_empty(){i18n::set_label(&info,"No guide received yet. Keep watching a channel to receive its programs.");}else{i18n::set_label(&info,"Times as broadcast • Guide updates while watching");}glib::ControlFlow::Continue
     });
 }
 
@@ -65,6 +75,10 @@ pub(super) fn show(state:Rc<RefCell<State>>,owner:&ApplicationWindow){
   let panel=gtk::Window::list_toplevels().into_iter().filter_map(|w|w.downcast::<gtk::Window>().ok()).find(|w|w.title().as_deref()==Some("Live TV! · Program guide")).unwrap();
   fn all(w:&gtk::Widget)->Vec<gtk::Widget>{let mut v=vec![w.clone()];if let Some(c)=w.downcast_ref::<gtk::Container>(){for child in c.children(){v.extend(all(&child));}}v}
   let widgets=all(panel.upcast_ref());let tree=widgets.iter().find_map(|w|w.downcast_ref::<gtk::TreeView>()).unwrap();let model=tree.model().unwrap();assert_eq!(model.iter_n_children(None),1);
+  // As on Windows, the program on now is selected without user action, and columns never overflow sideways.
+  assert_eq!(tree.selection().count_selected_rows(),1);
+  let scroll=widgets.iter().find_map(|w|w.downcast_ref::<gtk::ScrolledWindow>()).unwrap();assert_eq!(scroll.policy().0,gtk::PolicyType::Never);
+  assert_eq!(tree.column(3).unwrap().title().as_deref(),Some("Program"));
   tree.selection().select_iter(&model.iter_first().unwrap());let details=widgets.iter().find_map(|w|w.downcast_ref::<gtk::TextView>()).unwrap().buffer().unwrap();assert!(details.text(&details.start_iter(),&details.end_iter(),false).unwrap().contains("notícias"));
   let mut second=event.clone();second["program_id"]=serde_json::json!(20);second["channel_number"]=serde_json::json!(2);second["name"]=serde_json::json!("Second");state.borrow_mut().guide.ingest(&serde_json::json!([second]));pump();assert_eq!(model.iter_n_children(None),2);
   let filter=widgets.iter().find_map(|w|w.downcast_ref::<ComboBoxText>()).unwrap();filter.set_active_id(Some("641143:17056"));pump();assert_eq!(model.iter_n_children(None),1);

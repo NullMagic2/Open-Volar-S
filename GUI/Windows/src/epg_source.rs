@@ -4,11 +4,7 @@ use std::{
     time::{Duration, Instant},
 };
 pub fn current_title(events:&Value,frequency:u32,program:u32)->Option<String>{
-    events.as_array()?.iter().filter(|e|e["frequency_khz"].as_u64()==Some(frequency as u64)
-        && e["program_id"].as_u64()==Some(program as u64) && e["running"]==true && e["following"]!=true
-        && e["name"].as_str().is_some_and(|s|!s.trim().is_empty()))
-        .max_by_key(|e|e["start"].as_i64().unwrap_or(0))
-        .and_then(|e|e["name"].as_str()).map(|s|s.split_whitespace().collect::<Vec<_>>().join(" "))
+    a865r_media::guide_data::current_title(events,frequency,program)
 }
 #[cfg(test)]mod now_tests {use super::*;
     #[test]fn selects_current_title_only_for_the_selected_service(){let events=json!([
