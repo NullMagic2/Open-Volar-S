@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "a865r-bda"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "liba865r",
  "serde_json",
@@ -15,7 +15,7 @@ dependencies = [
 
 [[package]]
 name = "a865r-debug"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "eframe",
  "image",
@@ -29,7 +29,7 @@ dependencies = [
 
 [[package]]
 name = "a865r-tv"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "a865r-bda",
  "a865r-debug",
@@ -48,7 +48,7 @@ dependencies = [
 
 [[package]]
 name = "a865rctl"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "liba865r",
 ]
@@ -1688,7 +1688,7 @@ checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
 name = "liba865r"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "serde_json",
 ]
@@ -2267,21 +2267,21 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "open-volar-s-dvb-bridge"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "liba865r",
 ]
 
 [[package]]
 name = "open-volar-s-installer"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "eframe",
 ]
 
 [[package]]
 name = "open-volar-s-live-tv"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "a865r-debug",
  "cairo-rs",
@@ -2294,7 +2294,7 @@ dependencies = [
 
 [[package]]
 name = "open-volar-s-player"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "gpu-video",
  "image",
@@ -2308,7 +2308,7 @@ dependencies = [
 
 [[package]]
 name = "open-volar-s-wsl-video-host"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "cc",
  "gpu-video",

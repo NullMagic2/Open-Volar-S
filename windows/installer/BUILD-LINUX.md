@@ -32,7 +32,7 @@ under Wine should retain its desktop integration and does not use this helper.
 Windows binaries. Without that flag, both architectures are built first. The
 script uses Xvfb automatically when no DISPLAY is available.
 
-Output: `dist/Open-Volar-S-Setup-0.9.6-x64.exe`.
+Output: `dist/Open-Volar-S-Setup-0.9.7-x64.exe`.
 
 The staging helper includes the actual GNU runtime dependencies, both BDA DLLs,
 and freshly calculated adapter hashes. The same Inno script supports the original
