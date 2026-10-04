@@ -1,5 +1,5 @@
 //! Native program guide; populated passively from the same stream as playback.
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::{cell::RefCell, fs};
 use windows::{
     core::*,
@@ -62,6 +62,33 @@ fn date(seconds: i64) -> String {
         time / 60 % 60
     )
 }
+/// Same columns, in the same order, as the Linux guide.
+const COLUMNS: [&str; 6] = ["Channel", "Start", "End", "Program", "Status", "Age rating"];
+const HEADER: i32 = 30;
+fn columns(left: i32, right: i32, p: &dyn Fn(i32) -> i32) -> [(i32, i32); 6] {
+    let fixed = [p(190), p(110), p(110), 0, p(70), p(95)];
+    let program = (right - left - p(10) - fixed.iter().sum::<i32>()).max(p(80));
+    let mut x = left + p(10);
+    let mut out = [(0, 0); 6];
+    for (i, w) in [fixed[0], fixed[1], fixed[2], program, fixed[4], fixed[5]].into_iter().enumerate() {
+        out[i] = (x, x + w - p(8));
+        x += w;
+    }
+    out
+}
+fn status(v: &Value) -> String {
+    if v["following"] == true { crate::i18n::text("Next") }
+    else if v["running"] == true { crate::i18n::text("Now") }
+    else { String::new() }
+}
+/// One list row: the six column values, tab-separated, drawn by draw_row.
+fn row_text(v: &Value) -> String {
+    let start = v["start"].as_i64().unwrap_or(0);
+    let name = v["name"].as_str().filter(|n| !n.trim().is_empty()).map(str::to_owned)
+        .unwrap_or_else(|| crate::i18n::text("Program title not provided"));
+    let age = v["minimum_age"].as_u64().map(|a| format!("{a}+")).unwrap_or_default();
+    [station(v), date(start), date(start + v["duration"].as_i64().unwrap_or(0)), name.replace('\t', " "), status(v), age].join("\t")
+}
 fn range(v: &Value) -> String {
     let start = v["start"].as_i64().unwrap_or(0);
     let end = start + v["duration"].as_i64().unwrap_or(0);
@@ -94,9 +121,9 @@ pub fn ingest(events: &Value) {
             );
             unsafe {
                 // An open guide is filled when opened or filtered, and once when the first
-                // programs arrive; it is not rebuilt while the user reads it.
-                if !s.window.is_invalid() && IsWindowVisible(s.window).as_bool() && s.rows.is_empty() {
-                    s.refresh();
+                // programs arrive; afterwards only the on-air status changes in place.
+                if !s.window.is_invalid() && IsWindowVisible(s.window).as_bool() {
+                    if s.rows.is_empty() { s.refresh(); } else { s.update_status(); }
                 }
             }
         }
@@ -274,7 +301,7 @@ impl State {
         SendMessageW(super::item(self.window,LIST),LB_SETITEMHEIGHT,WPARAM(0),LPARAM(p(29) as isize));
         super::place(self.window,FILTER,p(28),p(64),r.right-p(56),p(220));
         super::place(self.window,INFO,p(30),p(107),r.right-p(60),p(24));
-        let top=p(146);
+        let top=p(146)+p(HEADER);
         let h=((r.bottom-p(160)-top)*2/3).max(p(100));
         super::place(self.window,LIST,p(30),top,r.right-p(60),h);
         super::place(self.window,DETAIL,p(30),top+h+p(20),r.right-p(60),(r.bottom-top-h-p(52)).max(p(60)));
@@ -282,6 +309,35 @@ impl State {
         let inset=RECT{left:p(10),top:p(8),right:area.right-p(10),bottom:area.bottom-p(8)};
         SendMessageW(edit,EM_SETRECT,WPARAM(0),LPARAM((&inset as *const RECT) as isize));
         let _=InvalidateRect(self.window,None,false);
+    }
+    /// Update the Status column in place when the broadcast announces a new program
+    /// on now or next; the list is not rebuilt, so selection and scrolling stay put.
+    unsafe fn update_status(&mut self) {
+        let current: std::collections::HashMap<_, _> = self.events.iter()
+            .filter(|v| v["running"] == true || v["following"] == true)
+            .map(|v| (key(v), (v["running"] == true, v["following"] == true))).collect();
+        let list = super::item(self.window, LIST);
+        let mut restore = None;
+        for (i, row) in self.rows.iter_mut().enumerate() {
+            let (running, following) = current.get(&key(row)).copied().unwrap_or((false, false));
+            if row["running"] == running && row["following"] == following { continue; }
+            row["running"] = json!(running);
+            row["following"] = json!(following);
+            if restore.is_none() {
+                restore = Some((SendMessageW(list, LB_GETTOPINDEX, WPARAM(0), LPARAM(0)).0,
+                    SendMessageW(list, LB_GETCURSEL, WPARAM(0), LPARAM(0)).0));
+                SendMessageW(list, WM_SETREDRAW, WPARAM(0), LPARAM(0));
+            }
+            let text = super::wide(&row_text(row));
+            SendMessageW(list, LB_DELETESTRING, WPARAM(i), LPARAM(0));
+            SendMessageW(list, LB_INSERTSTRING, WPARAM(i), LPARAM(text.as_ptr() as isize));
+        }
+        if let Some((top, selected)) = restore {
+            if selected >= 0 { SendMessageW(list, LB_SETCURSEL, WPARAM(selected as usize), LPARAM(0)); }
+            if top >= 0 { SendMessageW(list, LB_SETTOPINDEX, WPARAM(top as usize), LPARAM(0)); }
+            SendMessageW(list, WM_SETREDRAW, WPARAM(1), LPARAM(0));
+            let _ = InvalidateRect(list, None, false);
+        }
     }
     unsafe fn refresh(&mut self) {
         let filter = super::item(self.window, FILTER);
@@ -340,15 +396,7 @@ impl State {
         SendMessageW(list, WM_SETREDRAW, WPARAM(0), LPARAM(0));
         SendMessageW(list, LB_RESETCONTENT, WPARAM(0), LPARAM(0));
         for event in &self.rows {
-            let row = super::wide(&format!(
-                "{}   |   {}   |   {}",
-                range(event),
-                station(event),
-                event["name"]
-                    .as_str()
-                    .filter(|v| !v.is_empty())
-                    .map(str::to_owned).unwrap_or_else(||crate::i18n::text("Program title not provided"))
-            ));
+            let row = super::wide(&row_text(event));
             SendMessageW(list, LB_ADDSTRING, WPARAM(0), LPARAM(row.as_ptr() as isize));
         }
         let index = selected
@@ -416,7 +464,18 @@ unsafe fn paint(hwnd:HWND,dc:HDC) {
     for id in [LIST,DETAIL] {
         let child=super::item(hwnd,id);let mut rect=RECT::default();let _=GetWindowRect(child,&mut rect);
         let mut origin=POINT{x:rect.left,y:rect.top};let _=ScreenToClient(hwnd,&mut origin);
-        super::orbit::rounded_well(dc,RECT{left:origin.x-p(3),top:origin.y-p(3),right:origin.x+rect.right-rect.left+p(3),bottom:origin.y+rect.bottom-rect.top+p(3)},super::orbit::rgb(35,25,18),p(8));
+        let header=if id==LIST{p(HEADER)}else{0};
+        super::orbit::rounded_well(dc,RECT{left:origin.x-p(3),top:origin.y-p(3)-header,right:origin.x+rect.right-rect.left+p(3),bottom:origin.y+rect.bottom-rect.top+p(3)},super::orbit::rgb(35,25,18),p(8));
+        if id==LIST {
+            // Column headings, aligned with the rows (the list's client area excludes its scrollbar).
+            let width=super::client(child).right;
+            let band=RECT{left:origin.x,top:origin.y-header,right:origin.x+width,bottom:origin.y-p(1)};
+            super::fill(dc,band,super::orbit::rgb(50,37,25));
+            super::fill(dc,RECT{top:band.bottom,bottom:origin.y,..band},super::orbit::rgb(121,94,62));
+            for (i,(left,right)) in columns(band.left,band.right,&p).into_iter().enumerate() {
+                super::label(dc,RECT{left,right,..band},COLUMNS[i],p(14),super::orbit::rgb(217,194,159),i==5);
+            }
+        }
     }
 }
 unsafe fn draw_row(draw:&DRAWITEMSTRUCT) {
@@ -432,7 +491,14 @@ unsafe fn draw_row(draw:&DRAWITEMSTRUCT) {
     let selected=draw.itemState.0 & ODS_SELECTED.0!=0;
     super::fill(draw.hDC,r,super::orbit::rgb(if selected {76}else{35},if selected {52}else{25},if selected {33}else{18}));
     if selected {super::fill(draw.hDC,RECT{right:r.left+p(3),..r},super::orbit::rgb(190,153,91));}
-    super::label_raw(draw.hDC,RECT{left:r.left+p(10),right:r.right-p(8),..r},&String::from_utf16_lossy(&text),p(14),super::orbit::rgb(233,215,184),false);
+    let text=String::from_utf16_lossy(&text);
+    if is_list && text.contains('\t') {
+        for ((i,(left,right)),value) in columns(r.left,r.right,&p).into_iter().enumerate().zip(text.split('\t')) {
+            super::label_raw(draw.hDC,RECT{left,right,..r},value,p(14),super::orbit::rgb(233,215,184),i==5);
+        }
+    } else {
+        super::label_raw(draw.hDC,RECT{left:r.left+p(10),right:r.right-p(8),..r},&text,p(14),super::orbit::rgb(233,215,184),false);
+    }
 }
 unsafe extern "system" fn proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) -> LRESULT {
     super::orbit::dropdown_backdrop(hwnd,msg,wp,lp);
