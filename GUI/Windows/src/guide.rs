@@ -20,6 +20,8 @@ struct State {
     filter: usize,
     channels: Vec<(u64, u64, String)>,
     last_ingest: Vec<Value>,
+    /// The program on now has been shown since the guide opened or the filter changed.
+    revealed: bool,
 }
 const LAYOUT: u32 = WM_APP + 20;
 const FILTER: u16 = 601;
@@ -73,7 +75,6 @@ pub fn ingest(events: &Value) {
         let Ok(mut s) = cell.try_borrow_mut() else {
             return;
         };
-        let mut changed = false;
         if s.last_ingest == *events {
             return;
         }
@@ -83,27 +84,10 @@ pub fn ingest(events: &Value) {
                 .ok()
                 .and_then(|b| serde_json::from_slice(&b).ok())
                 .unwrap_or_default();
+            a865r_media::guide_data::clear_status(&mut s.events);
         }
-        for event in events {
-            if !event.is_object() {
-                continue;
-            }
-            if let Some(old) = s.events.iter_mut().find(|old| key(old) == key(event)) {
-                if old != event {
-                    *old = event.clone();
-                    changed = true;
-                }
-            } else {
-                s.events.push(event.clone());
-                changed = true;
-            }
-        }
+        let changed = a865r_media::guide_data::merge(&mut s.events, events);
         if changed {
-            s.events.sort_by_key(|v| v["start"].as_i64().unwrap_or(0));
-            if s.events.len() > 8192 {
-                let n = s.events.len() - 8192;
-                s.events.drain(..n);
-            }
             let _ = fs::write(
                 super::data_dir().join("epg.json"),
                 serde_json::to_vec(&s.events).unwrap_or_default(),
@@ -213,9 +197,11 @@ pub unsafe fn show(owner: HWND) -> Result<()> {
                     .ok()
                     .and_then(|b| serde_json::from_slice(&b).ok())
                     .unwrap_or_default();
+                a865r_media::guide_data::clear_status(&mut s.events);
             }
         }
         s.layout();
+        s.revealed = false;
         s.refresh();
         let window = s.window;
         let mut panel=RECT::default();let _=GetWindowRect(owner,&mut panel);
@@ -348,6 +334,7 @@ impl State {
             })
             .cloned()
             .collect();
+        let top = SendMessageW(list, LB_GETTOPINDEX, WPARAM(0), LPARAM(0)).0;
         SendMessageW(list, WM_SETREDRAW, WPARAM(0), LPARAM(0));
         SendMessageW(list, LB_RESETCONTENT, WPARAM(0), LPARAM(0));
         for event in &self.rows {
@@ -364,9 +351,15 @@ impl State {
         }
         let index = selected
             .and_then(|key_| self.rows.iter().position(|v| key(v) == key_))
-            .or_else(|| self.rows.iter().position(|v| v["running"] == true))
+            .or_else(|| self.rows.iter().position(|v| v["running"] == true && v["following"] != true))
             .unwrap_or(0);
         SendMessageW(list, LB_SETCURSEL, WPARAM(index), LPARAM(0));
+        // Reveal the program on now once; later guide updates keep the user's scroll position.
+        if !self.revealed && self.rows.iter().any(|v| v["running"] == true && v["following"] != true) {
+            self.revealed = true;
+        } else if top >= 0 {
+            SendMessageW(list, LB_SETTOPINDEX, WPARAM(top as usize), LPARAM(0));
+        }
         SendMessageW(list, WM_SETREDRAW, WPARAM(1), LPARAM(0));
         let _ = InvalidateRect(list, None, false);
         super::set_text(
@@ -501,6 +494,7 @@ unsafe extern "system" fn proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) -> 
                 let code = (wp.0 >> 16) as u32;
                 if id == FILTER && code == CBN_SELCHANGE {
                     s.filter = super::selected(super::item(hwnd, FILTER));
+                    s.revealed = false;
                     s.refresh();
                 } else if id == LIST && code == LBN_SELCHANGE {
                     s.details();

@@ -78,6 +78,8 @@ struct State{
     paused:bool,captions:bool,audio_mode:usize,recording_path:Option<PathBuf>,record_when_ready:bool,record_settings:Option<a865r_media::recording_export::Settings>,exports:Vec<ExportJob>,
     channel_digits:String,channel_deadline:Option<Instant>,
     channel_osd:String,channel_osd_until:Option<Instant>,volume_osd_until:Option<Instant>,
+    // As on Windows: show the channel banner again at the first frame, and once more when the program title arrives.
+    banner_first_frame:bool,banner_title_until:Option<Instant>,
     timeline_tick:Instant,timeline_position:f64,timeline_duration:f64,
     timeline_seekable:bool,seek_drag:Option<f64>,recording_start:Option<f64>,following_live:bool,
 }
@@ -152,7 +154,7 @@ impl State{
             captions:config["captions_enabled"].as_bool().unwrap_or(false),
             audio_mode:config["audio_mode"].as_u64().unwrap_or(0).min(4) as usize,
             channel_digits:String::new(),channel_deadline:None,channel_osd:String::new(),
-            channel_osd_until:None,volume_osd_until:None,
+            channel_osd_until:None,volume_osd_until:None,banner_first_frame:false,banner_title_until:None,
             timeline_tick:Instant::now(),timeline_position:0.,timeline_duration:0.,
             timeline_seekable:false,seek_drag:None,recording_start:None,following_live:false}
     }
@@ -210,6 +212,7 @@ impl State{
         if let Err(e)=self.parental_check(){self.status=e;return;}
         self.export_notice=None;
         self.start(TvAction::Watch{frequency:self.frequency_khz},JobKind::Watch);
+        if self.job.is_some(){self.banner_first_frame=true;self.banner_title_until=Some(Instant::now()+Duration::from_secs(15));}
     }
     fn button_material_name(&self)->&'static str{["metal","glass","plastic"][self.button_material]}
     fn save_config(&self){
@@ -334,6 +337,19 @@ impl State{
         if self.channel_digits.is_empty()&&self.channel_osd_until.is_some_and(|t|Instant::now()<t)&&self.channel_osd.starts_with(&self.channel_label()){
             let text=self.channel_osd_text();if text!=self.channel_osd{self.channel_osd=text;}
         }
+        if self.job.as_ref().is_some_and(|j|j.kind==JobKind::Watch)&&self.channel_digits.is_empty(){
+            if self.banner_first_frame&&self.ipc.exists()&&self.player_request(serde_json::json!({"command":["get_property","native-video-pos"]})).is_ok_and(|v|v.is_number()){
+                self.banner_first_frame=false;self.show_channel(self.channel_osd_text());
+            }
+            if let Some(until)=self.banner_title_until{
+                if Instant::now()>=until{self.banner_title_until=None;}
+                else if let Some(title)=self.current_programme(){
+                    self.banner_title_until=None;
+                    let showing=self.channel_osd_until.is_some_and(|t|Instant::now()<t)&&self.channel_osd.contains(&title);
+                    if !showing{self.show_channel(self.channel_osd_text());}
+                }
+            }
+        }else{self.banner_first_frame=false;self.banner_title_until=None;}
         let mut index=0;
         while index<self.exports.len(){
             if let Ok(result)=self.exports[index].result.try_recv(){
