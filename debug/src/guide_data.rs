@@ -28,26 +28,33 @@ pub fn clear_status(events:&mut [Value]) {
 /// (or next) for a service supersedes older ones of that service, so stale
 /// status from earlier reception cannot persist. Shared by Windows and Linux.
 pub fn merge(events:&mut Vec<Value>,incoming:&[Value])->bool {
-    let mut changed=false;
-    for event in incoming.iter().filter(|e|e.is_object()) {
-        if let Some(old)=events.iter_mut().find(|o|key(o)==key(event)){if old!=event{*old=event.clone();changed=true;}}
-        else{events.push(event.clone());changed=true;}
-    }
     let service=|v:&Value|(number(v,"frequency_khz"),number(v,"program_id"));
     let now=|v:&Value|v["running"]==true&&v["following"]!=true;
     let next=|v:&Value|v["following"]==true;
+    let mut winners=Vec::new();
     for (flag,has) in [("running",&now as &dyn Fn(&Value)->bool),("following",&next)] {
         let mut latest=std::collections::HashMap::new();
-        for e in incoming.iter().filter(|e|has(e)) {
+        for e in incoming.iter().filter(|e|e.is_object()&&has(e)) {
             let start=e["start"].as_i64().unwrap_or(0);
             let entry=latest.entry(service(e)).or_insert((start,key(e)));
             if start>entry.0 {*entry=(start,key(e));}
         }
-        for e in events.iter_mut() {
-            if let Some((_,winner))=latest.get(&service(e)) {
-                if e[flag]==true&&key(e)!=*winner {e[flag]=json!(false);changed=true;}
-            }
-        }
+        winners.push((flag,latest));
+    }
+    // Normalize before comparing, so repeated identical reception is not a change.
+    let normalize=|mut e:Value|{
+        for (flag,latest) in &winners {
+            if let Some((_,winner))=latest.get(&service(&e)) {if e[*flag]==true&&key(&e)!=*winner {e[*flag]=json!(false);}}
+        }e
+    };
+    let mut changed=false;
+    for event in incoming.iter().filter(|e|e.is_object()).cloned().map(&normalize) {
+        if let Some(old)=events.iter_mut().find(|o|key(o)==key(&event)){if *old!=event{*old=event;changed=true;}}
+        else{events.push(event);changed=true;}
+    }
+    for e in events.iter_mut() {
+        let normalized=normalize(e.clone());
+        if *e!=normalized {*e=normalized;changed=true;}
     }
     if changed {
         events.sort_by_key(|v|v["start"].as_i64().unwrap_or(0));
@@ -92,6 +99,14 @@ impl Cache {
     pub fn current_title(&self,frequency:u32,program:u32)->Option<String>{current_title(&json!(self.events),frequency,program)}
 }
 #[cfg(test)]mod tests {use super::*;
+ #[test]fn conflicting_status_in_reception_settles_instead_of_changing_every_update(){
+  // The same multiplex snapshot arriving repeatedly must not count as a guide change.
+  let incoming=[json!({"frequency_khz":1,"program_id":2,"event_id":1,"start":10,"name":"Earlier","running":true}),
+   json!({"frequency_khz":1,"program_id":2,"event_id":2,"start":20,"name":"Later","running":true})];
+  let mut events=Vec::new();assert!(merge(&mut events,&incoming));
+  for _ in 0..3 {assert!(!merge(&mut events,&incoming));}
+  assert_eq!(current_title(&json!(events),1,2).as_deref(),Some("Later"));
+ }
  #[test]fn newer_present_and_following_supersede_stale_status(){
   let mut events=vec![json!({"frequency_khz":1,"program_id":2,"event_id":1,"start":10,"name":"Night show","running":true}),
    json!({"frequency_khz":1,"program_id":2,"event_id":2,"start":20,"name":"Old next","following":true}),

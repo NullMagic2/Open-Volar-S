@@ -93,7 +93,9 @@ pub fn ingest(events: &Value) {
                 serde_json::to_vec(&s.events).unwrap_or_default(),
             );
             unsafe {
-                if !s.window.is_invalid() && IsWindowVisible(s.window).as_bool() {
+                // An open guide is filled when opened or filtered, and once when the first
+                // programs arrive; it is not rebuilt while the user reads it.
+                if !s.window.is_invalid() && IsWindowVisible(s.window).as_bool() && s.rows.is_empty() {
                     s.refresh();
                 }
             }
