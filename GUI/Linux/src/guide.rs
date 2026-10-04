@@ -42,7 +42,7 @@ pub(super) fn show(state:Rc<RefCell<State>>,owner:&ApplicationWindow){
     let rows=Rc::new(RefCell::new(Vec::<Value>::new()));let chosen=rows.clone();let buffer=details.buffer().unwrap();
     tree.selection().connect_changed(move|selection|{if let Some((model,it))=selection.selected(){if let Ok(n)=model.value(&it,6).get::<u32>(){if let Some(v)=chosen.borrow().get(n as usize){buffer.set_text(&guide_data::detail(v,&i18n::text("Program title not provided"),&i18n::text("No description supplied by the broadcaster.")));}}}});
     let st=state.clone();let chosen=rows.clone();tree.connect_row_activated(move|view,path,_|{let Some(model)=view.model()else{return};let Some(it)=model.iter(path)else{return};let Ok(n)=model.value(&it,6).get::<u32>()else{return};if let Some(v)=chosen.borrow().get(n as usize){let mut s=st.borrow_mut();if let Some(i)=s.services.iter().position(|c|c["frequency_khz"]==v["frequency_khz"]&&c["program_id"]==v["program_id"]){s.select_channel(i);}}});
-    panel.add(&overlay);panel.show_all();let weak=panel.downgrade();let mut last=None;let mut stations=Vec::<(String,String)>::new();let mut last_filter=None::<String>;
+    panel.add(&overlay);panel.show_all();let weak=panel.downgrade();let mut last=None;let mut stations=Vec::<(String,String)>::new();let mut last_filter=None::<String>;let mut revealed=false;let list_scroll=scroll.clone();
     glib::timeout_add_local(Duration::from_millis(250),move||{
         if weak.upgrade().is_none_or(|p|!p.is_visible()){return glib::ControlFlow::Break}
         let s=state.borrow();let selection=filter.active_id().map(|s|s.to_string()).unwrap_or_else(||"all".into());
@@ -52,13 +52,20 @@ pub(super) fn show(state:Rc<RefCell<State>>,owner:&ApplicationWindow){
         if stations!=updated {filter.remove_all();filter.append(Some("all"),&i18n::text("All received channels"));for (id,label) in &updated{filter.append(Some(id),label);}if !filter.set_active_id(Some(&selection)){filter.set_active_id(Some("all"));}stations=updated;}
         let selected=tree.selection().selected().and_then(|(m,it)|m.value(&it,6).get::<u32>().ok()).and_then(|i|rows.borrow().get(i as usize).map(guide_data::key));
         let refilter=last_filter.as_deref()!=Some(selection.as_str());last_filter=Some(selection.clone());
-        let selected=if refilter{None}else{selected};
+        if refilter{revealed=false;}
+        let selected=if refilter{None}else{selected};let top=list_scroll.vadjustment().value();
         let events:Vec<_>=s.guide.events.iter().filter(|v|selection=="all"||format!("{}:{}",v["frequency_khz"],v["program_id"])==selection).cloned().collect();
         store.clear();*rows.borrow_mut()=events.clone();for (i,v) in events.iter().enumerate(){let start=v["start"].as_i64().unwrap_or(0);let end=start.saturating_add(v["duration"].as_i64().unwrap_or(0));let status=if v["following"]==true{"Next"}else if v["running"]==true{"Now"}else{""};let age=v["minimum_age"].as_u64().map(|v|format!("{v}+")).unwrap_or_default();
             let it=store.insert_with_values(None,&[(0,&guide_data::station(v)),(1,&guide_data::date(start)),(2,&guide_data::date(end)),(3,&v["name"].as_str().filter(|n|!n.trim().is_empty()).map(str::to_owned).unwrap_or_else(||i18n::text("Program title not provided"))),(4,&i18n::text(status)),(5,&age),(6,&(i as u32))]);if selected==Some(guide_data::key(v)){tree.selection().select_iter(&it);}}
-        if tree.selection().count_selected_rows()==0{
-            let index=events.iter().position(|v|v["running"]==true&&v["following"]!=true).unwrap_or(0);
+        // As on Windows: reveal the program on now once (when opened or the filter changes);
+        // later guide updates keep the user's selection and scroll position.
+        let now=events.iter().position(|v|v["running"]==true&&v["following"]!=true);
+        if let (false,Some(index))=(revealed,now){
+            revealed=true;
             if let Some(it)=store.iter_nth_child(None,index as i32){tree.selection().select_iter(&it);if let Some(path)=store.path(&it){tree.scroll_to_cell(Some(&path),None::<&gtk::TreeViewColumn>,true,0.3,0.);}}
+        }else{
+            if tree.selection().count_selected_rows()==0{if let Some(it)=store.iter_nth_child(None,now.unwrap_or(0) as i32){tree.selection().select_iter(&it);}}
+            let adjustment=list_scroll.vadjustment();glib::idle_add_local_once(move||adjustment.set_value(top));
         }
         if events.is_empty(){i18n::set_label(&info,"No guide received yet. Keep watching a channel to receive its programs.");}else{i18n::set_label(&info,"Times as broadcast • Guide updates while watching");}glib::ControlFlow::Continue
     });
@@ -84,6 +91,18 @@ pub(super) fn show(state:Rc<RefCell<State>>,owner:&ApplicationWindow){
   let filter=widgets.iter().find_map(|w|w.downcast_ref::<ComboBoxText>()).unwrap();filter.set_active_id(Some("641143:17056"));pump();assert_eq!(model.iter_n_children(None),1);
   let mut updated=event.clone();updated["description"]=serde_json::json!("Updated description");state.borrow_mut().guide.ingest(&serde_json::json!([updated]));pump();assert!(details.text(&details.start_iter(),&details.end_iter(),false).unwrap().contains("Updated description"));
   assert!(!panel.is_decorated());assert!(panel.style_context().has_class("orbit-guide"));
+  // The program on now is revealed once; later guide updates must not pull the view back to it.
+  filter.set_active_id(Some("all"));pump();
+  let day:Vec<_>=(0..600).map(|n|{let mut e=event.clone();e["event_id"]=serde_json::json!(100+n);e["start"]=serde_json::json!(1790300000i64+n*1800);e["name"]=serde_json::json!(format!("Show {n}"));e["running"]=serde_json::json!(n==300);e}).collect();
+  filter.set_active_id(Some("641143:17056"));state.borrow_mut().guide.ingest(&serde_json::json!(day));pump();
+  let scroll=widgets.iter().find_map(|w|w.downcast_ref::<gtk::ScrolledWindow>()).unwrap();let adjustment=scroll.vadjustment();
+  assert!(adjustment.value()>0.,"program on now was not revealed");
+  // A clicked row also becomes GTK's keyboard cursor.
+  if let Some((model,it))=tree.selection().selected(){if let Some(path)=model.path(&it){tree.set_cursor(&path,None::<&gtk::TreeViewColumn>,false);}}pump();
+  panel.present();tree.grab_focus();pump();
+  adjustment.set_value(0.);pump();
+  let mut later=day.clone();later[5]["description"]=serde_json::json!("Late update");state.borrow_mut().guide.ingest(&serde_json::json!(later));pump();
+  assert_eq!(adjustment.value(),0.,"guide update moved the user's scroll position");
   if let Some(path)=std::env::var_os("OVS_GUIDE_PREVIEW"){
    pump();let a=panel.allocation();panel.window().unwrap().pixbuf(0,0,a.width(),a.height()).unwrap().savev(path,"png",&[]).unwrap();
   }
