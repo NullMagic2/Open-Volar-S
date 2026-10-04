@@ -21,7 +21,7 @@ use serde_json::Value;
 use skin::{Action,DrawState,Skin};
 use picture::Picture;
 use std::cell::{Cell,RefCell};
-use std::ffi::{c_int,c_void,CString};
+use std::ffi::{c_int,c_ulong,c_void,CString};
 use std::io::{Write,BufRead,BufReader};
 use std::os::unix::ffi::OsStrExt;
 use std::os::unix::net::UnixStream;
@@ -34,7 +34,11 @@ use std::thread;
 use std::time::{Duration,Instant,SystemTime,UNIX_EPOCH};
 
 #[link(name="gdk-3")]
-unsafe extern "C" { fn gdk_x11_window_get_xid(window:*mut c_void)->u64; }
+unsafe extern "C" {
+    fn gdk_x11_window_get_xid(window:*mut c_void)->u64;
+    fn gdk_x11_window_set_user_time(window:*mut gdk::ffi::GdkWindow,timestamp:u32);
+    fn gdk_x11_atom_to_xatom_for_display(display:*mut gdk::ffi::GdkDisplay,atom:gdk::ffi::GdkAtom)->c_ulong;
+}
 #[link(name="fontconfig")]
 unsafe extern "C" {
     fn FcConfigGetCurrent()->*mut c_void;
@@ -1639,8 +1643,118 @@ fn place_mapped_window(window:&gtk::Window,x:i32,y:i32) {
         if attempts>=10{glib::ControlFlow::Break}else{glib::ControlFlow::Continue}
     });
 }
-// Raise the visible pair without moving keyboard focus or restoring hidden windows.
-// This app uses X11 (also under Ubuntu's Wayland session via XWayland).
+fn native_window_id(surface:&gdk::Window)->u64 {
+    let pointer:*mut gdk::ffi::GdkWindow=surface.to_glib_none().0;
+    unsafe{gdk_x11_window_get_xid(pointer as *mut c_void)}
+}
+fn window_property_id(window:&gdk::Window,name:&str,kind:&str)->Option<u64> {
+    let (_,format,data)=gdk::property_get(window,&gdk::Atom::intern(name),
+        &gdk::Atom::intern(kind),0,1,0)?;
+    // Xlib represents a format-32 property as native unsigned longs.
+    if format!=32{return None;}
+    let value=c_ulong::from_ne_bytes(data.get(..std::mem::size_of::<c_ulong>())?.try_into().ok()?);
+    (value!=0).then_some(value as u64)
+}
+fn unminimize_companion(peer:&gtk::Window) {
+    // XFWM can focus a newly remapped window. Temporarily make the automatic
+    // companion unfocusable until its unminimize event has arrived.
+    let accepts_focus=peer.accepts_focus();
+    peer.set_accept_focus(false);
+    let handler=Rc::new(RefCell::new(None::<glib::SignalHandlerId>));
+    let pending=handler.clone();
+    let id=peer.connect_window_state_event(move |peer,event|{
+        if !event.new_window_state().contains(gdk::WindowState::ICONIFIED){
+            if let Some(id)=pending.borrow_mut().take(){peer.disconnect(id);}
+            let weak=peer.downgrade();
+            // Leave the hint in place through XFWM's map/focus processing.
+            glib::timeout_add_local_once(Duration::from_millis(100),move||{
+                if let Some(peer)=weak.upgrade(){peer.set_accept_focus(accepts_focus);}
+            });
+        }
+        glib::Propagation::Proceed
+    });
+    *handler.borrow_mut()=Some(id);
+    if let Some(surface)=peer.window(){unsafe{gdk_x11_window_set_user_time(surface.to_glib_none().0,0);}}
+    peer.deiconify();
+}
+fn bring_window_pair(active:&gtk::Window,peer:&gtk::Window) {
+    if std::env::var_os("OPEN_VOLAR_S_UI_TRACE").is_some(){eprintln!("PAIR raise {:?} peer {:?}",active.window().as_ref().map(native_window_id),peer.window().as_ref().map(native_window_id));}
+    if !active.is_visible() || !peer.is_visible(){return;}
+    if peer.window().is_some_and(|surface|surface.state().contains(gdk::WindowState::ICONIFIED)){
+        unminimize_companion(peer);
+    }
+    // The WM has already raised the activated window. Place its peer directly
+    // underneath it in one request, without a second raise or focus transfer.
+    if let (Some(active_surface),Some(peer_surface))=(active.window(),peer.window()){
+        peer_surface.restack(Some(&active_surface),false);
+    }
+}
+#[repr(C)]
+struct NativePropertyEvent {
+    event_type:c_int,serial:c_ulong,send_event:c_int,display:*mut c_void,
+    window:c_ulong,atom:c_ulong,time:c_ulong,state:c_int,
+}
+struct PairActivation {
+    viewer:glib::WeakRef<ApplicationWindow>,deck:glib::WeakRef<gtk::Window>,
+    root:gdk::Window,active_atom:c_ulong,inside:Cell<bool>,
+}
+impl PairActivation {
+    fn observe(&self) {
+        let (Some(viewer),Some(deck))=(self.viewer.upgrade(),self.deck.upgrade())else{return;};
+        let Some(active)=window_property_id(&self.root,"_NET_ACTIVE_WINDOW","WINDOW")else{return;};
+        let viewer_id=viewer.window().as_ref().map(native_window_id);
+        let deck_id=deck.window().as_ref().map(native_window_id);
+        let member=Some(active)==viewer_id || Some(active)==deck_id;
+        // Dialogs belonging to this process are also internal activations.
+        let own=member || gtk::prelude::WidgetExt::screen(&viewer).is_some_and(|screen|
+            screen.toplevel_windows().iter().any(|window|native_window_id(window)==active
+                && window_property_id(window,"_NET_WM_PID","CARDINAL")==Some(std::process::id() as u64)));
+        let was_inside=self.inside.replace(own);
+        if std::env::var_os("OPEN_VOLAR_S_UI_TRACE").is_some(){eprintln!("PAIR active {active} member {member} own {own} previous {was_inside}");}
+        if !member || was_inside{return;}
+        let weak_viewer=self.viewer.clone();let weak_deck=self.deck.clone();let root=self.root.clone();
+        glib::idle_add_local_once(move||{
+            if let (Some(viewer),Some(deck))=(weak_viewer.upgrade(),weak_deck.upgrade()){
+                // Do not raise stale requests if the user has already switched away.
+                if window_property_id(&root,"_NET_ACTIVE_WINDOW","WINDOW")!=Some(active){return;}
+                if Some(active)==viewer.window().as_ref().map(native_window_id){
+                    bring_window_pair(viewer.upcast_ref(),&deck);
+                }else{bring_window_pair(&deck,viewer.upcast_ref());}
+            }
+        });
+    }
+}
+unsafe extern "C" fn pair_activation_filter(event:*mut gdk::ffi::GdkXEvent,
+    _: *mut gdk::ffi::GdkEvent,data:*mut c_void)->gdk::ffi::GdkFilterReturn {
+    // Observe the WM's root property without translating or consuming events.
+    let state=unsafe{&*(data as *const PairActivation)};
+    let property=unsafe{&*(event as *const NativePropertyEvent)};
+    if property.event_type==28 && property.atom==state.active_atom{state.observe();}
+    gdk::ffi::GDK_FILTER_CONTINUE
+}
+fn restore_iconified_peer(event:&gdk::EventWindowState,peer:&gtk::Window) {
+    if event.changed_mask().contains(gdk::WindowState::ICONIFIED)
+        && !event.new_window_state().contains(gdk::WindowState::ICONIFIED)
+        && peer.is_visible()
+        && peer.window().is_some_and(|surface|surface.state().contains(gdk::WindowState::ICONIFIED)) {
+        unminimize_companion(peer);
+    }
+}
+fn desktop_name_is_xfce(name:&str)->bool {
+    name.split([':', '/', ';']).any(|part|
+        matches!(part.trim().to_ascii_lowercase().as_str(),"xfce"|"xfce4"|"xubuntu"))
+}
+fn desktop_session_is_xfce(current:&str,session:&str,legacy:&str)->bool {
+    // The current desktop wins over inherited login-session values, which can
+    // be stale in a nested GNOME session launched from XFCE.
+    [current,session,legacy].into_iter().find(|name|!name.trim().is_empty())
+        .is_some_and(desktop_name_is_xfce)
+}
+fn is_xfce_session()->bool {
+    let value=|key|std::env::var(key).unwrap_or_default();
+    desktop_session_is_xfce(&value("XDG_CURRENT_DESKTOP"),
+        &value("XDG_SESSION_DESKTOP"),&value("DESKTOP_SESSION"))
+}
 fn raise_visible_pair(active:&gtk::Window,peer:&gtk::Window) {
     let visible=|w:&gtk::Window|w.is_visible() && w.is_mapped() && w.window()
         .is_some_and(|s|!s.state().intersects(gdk::WindowState::ICONIFIED|gdk::WindowState::WITHDRAWN));
@@ -1649,7 +1763,7 @@ fn raise_visible_pair(active:&gtk::Window,peer:&gtk::Window) {
         if let Some(surface)=active.window(){surface.raise();}
     }
 }
-fn link_window_activation(viewer:&ApplicationWindow,deck:&gtk::Window) {
+fn link_original_window_activation(viewer:&ApplicationWindow,deck:&gtk::Window) {
     if std::env::var_os("WSL_DISTRO_NAME").is_some(){return;}
     let weak=deck.downgrade();
     viewer.connect_focus_in_event(move |viewer,_|{
@@ -1662,6 +1776,37 @@ fn link_window_activation(viewer:&ApplicationWindow,deck:&gtk::Window) {
         glib::Propagation::Proceed
     });
 }
+fn link_window_activation(viewer:&ApplicationWindow,deck:&gtk::Window) {
+    if !is_xfce_session(){
+        // Preserve the original Ubuntu GNOME (and other desktop) behavior.
+        link_original_window_activation(viewer,deck);
+        return;
+    }
+    if std::env::var_os("WSL_DISTRO_NAME").is_some(){return;}
+    let Some(screen)=gtk::prelude::WidgetExt::screen(viewer)else{return;};
+    let Some(root)=screen.root_window()else{return;};
+    root.set_events(root.events()|gdk::EventMask::PROPERTY_CHANGE_MASK);
+    let active_atom=unsafe{gdk_x11_atom_to_xatom_for_display(screen.display().to_glib_none().0,
+        gdk::Atom::intern("_NET_ACTIVE_WINDOW").to_glib_none().0)};
+    let observer=Box::new(PairActivation{viewer:viewer.downgrade(),deck:deck.downgrade(),
+        root:root.clone(),active_atom,inside:Cell::new(false)});
+    let data=Box::into_raw(observer) as *mut c_void;
+    unsafe{gdk::ffi::gdk_window_add_filter(root.to_glib_none().0,Some(pair_activation_filter),data);}
+    viewer.connect_destroy(move |_|unsafe{
+        gdk::ffi::gdk_window_remove_filter(root.to_glib_none().0,Some(pair_activation_filter),data);
+        drop(Box::from_raw(data as *mut PairActivation));
+    });
+    let weak=deck.downgrade();
+    viewer.connect_window_state_event(move |_,event|{
+        if let Some(deck)=weak.upgrade(){restore_iconified_peer(event,&deck);}
+        glib::Propagation::Proceed
+    });
+    let weak=viewer.downgrade();
+    deck.connect_window_state_event(move |_,event|{
+        if let Some(viewer)=weak.upgrade(){restore_iconified_peer(event,viewer.upcast_ref());}
+        glib::Propagation::Proceed
+    });
+}
 fn receiver_dialog(state:Rc<RefCell<State>>,window:&ApplicationWindow) {
     if let Some(existing)=RECEIVER_WINDOW.with(|slot|slot.borrow().clone()) {
         existing.show_all();
@@ -1669,8 +1814,7 @@ fn receiver_dialog(state:Rc<RefCell<State>>,window:&ApplicationWindow) {
         return;
     }
     let panel=gtk::Window::new(gtk::WindowType::Toplevel);
-    // Match Windows: two independent top-level windows. Making the DAC a
-    // transient popup causes WSLg/Windows to redirect viewer activation to it.
+    // XFCE uses transition-based grouping; other desktops retain original activation.
     panel.set_focus_on_map(false);
     link_window_activation(window,&panel);
     let weak=panel.downgrade();
@@ -2298,5 +2442,26 @@ pub fn run(){
         while glib::MainContext::default().iteration(false){}
         assert!(!panel.is_visible());viewer.close();
         let _=std::fs::remove_file(config_path);
+    }
+}
+
+#[cfg(test)]
+mod desktop_activation_tests {
+    use super::{desktop_name_is_xfce,desktop_session_is_xfce};
+    #[test]
+    fn nested_gnome_does_not_inherit_xfce_policy() {
+        assert!(!desktop_session_is_xfce("ubuntu:GNOME","ubuntu","xfce"));
+        assert!(desktop_session_is_xfce("XFCE","xfce","ubuntu"));
+        assert!(desktop_session_is_xfce("","xfce","ubuntu"));
+        assert!(!desktop_session_is_xfce("","",""));
+    }
+    #[test]
+    fn xfce_policy_does_not_match_ubuntu_gnome() {
+        for name in ["XFCE","xfce","xfce4","xubuntu","Xubuntu:XFCE","/usr/share/xsessions/xfce"] {
+            assert!(desktop_name_is_xfce(name),"{name}");
+        }
+        for name in ["ubuntu:GNOME","GNOME","ubuntu","Ubuntu","Unity","KDE","","my-xfce-test"] {
+            assert!(!desktop_name_is_xfce(name),"{name}");
+        }
     }
 }
