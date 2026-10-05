@@ -1,6 +1,8 @@
 //! Runtime UI localization. Broadcast metadata, filenames and stored control values stay unchanged.
 use crate::*;
 use std::{collections::HashMap,sync::{OnceLock,atomic::{AtomicUsize,Ordering}}};
+#[path="../../shared/uppercase.rs"] mod uppercase;
+pub use uppercase::upper;
 pub const LANGUAGE:u16=347;
 pub const NAMES:[&str;4]=["English","Português (Brasil)","Español","Ελληνικά"];
 pub const CODES:[&str;4]=["en","pt-BR","es","el"];
@@ -28,8 +30,8 @@ pub fn translate(source:&str,lang:usize)->String {
     let lang=lang.min(3);if lang==0{return source.into();}
     if let Some(value)=catalog().get(source){return value[lang].clone();}
     let trim=source.trim();if trim!=source {let leading=source.len()-source.trim_start().len();let trailing=source.len()-source.trim_end().len();return format!("{}{}{}",&source[..leading],translate(trim,lang),&source[source.len()-trailing..]);}
-    let upper=source.chars().any(char::is_alphabetic) && source==source.to_uppercase();
-    if upper {if let Some((_,value))=catalog().iter().find(|(key,_)|key.to_uppercase()==source){return value[lang].to_uppercase();}}
+    let capitals=source.chars().any(char::is_alphabetic) && source==source.to_uppercase();
+    if capitals {if let Some((_,value))=catalog().iter().find(|(key,_)|key.to_uppercase()==source){return upper(&value[lang]);}}
     for (key,value) in catalog(){
         if !key.contains("{}"){continue;}
         if let Some(args)=captures(key,source){let mut out=String::new();let mut args=args.iter();for (i,part) in value[lang].split("{}").enumerate(){if i>0{out.push_str(args.next().copied().unwrap_or(""));}out.push_str(part);}return out;}

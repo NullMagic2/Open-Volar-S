@@ -158,7 +158,7 @@ pub unsafe fn translated_buttons(hwnd:HWND,r:RECT)->Vec<(u16,f32,f32,f32)>{
     let dc=GetDC(hwnd);let sy=r.bottom as f64/547.;
     let f=font(dc,(46.*sy*0.31).round().max(11.) as i32);
     let mut result=BUTTONS.to_vec();
-    let measure=|label:&str|{let text=wide(&i18n::text(label).to_uppercase());let mut size=SIZE::default();
+    let measure=|label:&str|{let text=wide(&i18n::upper(&i18n::text(label)));let mut size=SIZE::default();
         let _=GetTextExtentPoint32W(dc,&text[..text.len()-1],&mut size);size.cx as f64/sy};
     for (start,labels) in [(0,&["CH -","CH +","","","PLAY","STOP","REC","FULLSCREEN"][..]),
         (8,&["GUIDE","SNAPSHOT","AUDIO","CC OFF","LIBRARY","OPEN","SETTINGS"][..])]{
@@ -852,10 +852,9 @@ impl Skin {
             if draw.itemState.0 & ODS_FOCUS.0!=0 {let _=focus_outline(dc,&RECT{left:3,top:3,right:r.right-3,bottom:r.bottom-3});}
             return;
         }
-        let mut text = i18n::raw(draw.hwndItem).unwrap_or_else(||text_of(draw.hwndItem))
-            .replace(['▶', 'Ⅱ', '■', '●', '⚙'], "")
-            .trim()
-            .to_uppercase();
+        let text = i18n::raw(draw.hwndItem).unwrap_or_else(||text_of(draw.hwndItem))
+            .replace(['▶', 'Ⅱ', '■', '●', '⚙'], "");
+        let mut text = i18n::upper(text.trim());
         if id == EPG {
             text = "GUIDE".into()
         }
@@ -1454,7 +1453,7 @@ mod tests {
                 let f=font(dc,(46.*scale*0.31).round().max(11.) as i32);
                 let mut right=0.;
                 for ((_,x,_,width),label) in buttons[8..].iter().zip(["GUIDE","SNAPSHOT","AUDIO","CC OFF","LIBRARY","OPEN","SETTINGS"]){
-                    let text=wide(&i18n::text(label).to_uppercase());let mut size=SIZE::default();
+                    let text=wide(&i18n::upper(&i18n::text(label)));let mut size=SIZE::default();
                     let _=GetTextExtentPoint32W(dc,&text[..text.len()-1],&mut size);
                     assert!(*x>=right&&x+width<=1133.,"Overlapping translated button: {lang} {label}");
                     assert!(size.cx as f64+(46.*0.36+46./7.+16.)*scale<=*width as f64*scale,"Clipped translation: {lang} {label}");

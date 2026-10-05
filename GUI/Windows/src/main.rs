@@ -215,6 +215,8 @@ struct App {
     channel_entry_until: Option<std::time::Instant>,
     volume_osd_until: Option<std::time::Instant>,
     osd_on_first_frame: bool,
+    /// After tuning, show the channel banner again once the program title arrives.
+    osd_title_until: Option<std::time::Instant>,
     countries: Vec<Value>,
     country: usize,
     verification: Option<(std::time::Instant, u8, PathBuf)>,
@@ -891,6 +893,7 @@ impl App {
         let aspect_ratio=self.aspect_ratio;
         let picture=self.picture;let video_hdr=self.video_hdr;
         self.osd_on_first_frame=matches!(job,Job::Watch|Job::Record);
+        self.osd_title_until=self.osd_on_first_frame.then(||std::time::Instant::now()+std::time::Duration::from_secs(15));
         if self.osd_on_first_frame { unsafe { self.show_osd(false); } }
         let surface = self.surface.0 as usize;
         let volume = self.volume;
@@ -983,6 +986,14 @@ impl App {
         }
         if self.osd_on_first_frame && self.control.snapshot()["video_size"].as_array().is_some() {
             self.osd_on_first_frame=false; self.show_osd(false);
+        }
+        if let Some(until)=self.osd_title_until {
+            if now>=until { self.osd_title_until=None; }
+            else if let Some(title)=self.current_programme() {
+                self.osd_title_until=None;
+                let showing=self.channel_osd_until.is_some() && text_of(item(self.video,CHANNEL_OSD)).contains(&title);
+                if self.channel_digits.is_empty() && !showing { self.show_osd(false); }
+            }
         }
 
         // Exercise the same restart path used by Settings without desktop automation.
@@ -2566,7 +2577,7 @@ unsafe fn run() -> windows::core::Result<()> {
     let video = CreateWindowExW(
         WINDOW_EX_STYLE(0),
         class,
-        w!("Live TV! — 0.9.6 • Vulkan preview"),
+        w!("Live TV! — 0.9.8 • Vulkan preview"),
         WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CLIPCHILDREN,
         80,
         50,
@@ -3006,6 +3017,7 @@ unsafe fn run() -> windows::core::Result<()> {
         channel_entry_until: None,
         volume_osd_until: None,
         osd_on_first_frame: false,
+        osd_title_until: None,
         verification: None,
         countries: profiles,
         country,
