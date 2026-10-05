@@ -25,7 +25,7 @@ class DevicePermissions(unittest.TestCase):
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             calls = log.read_text().splitlines()
             self.assertEqual(calls[1], 'udevadm control --reload-rules')
-            self.assertIn('dkms add -m open-volar-s -v 0.9.6', calls)
+            self.assertIn('dkms add -m open-volar-s -v 0.9.8', calls)
             self.assertEqual(calls[-4:], [
                 "udevadm trigger --action=add --subsystem-match=usbmisc --sysname-match=open-volar-s[0-9]*",
                 "udevadm trigger --action=add --subsystem-match=misc --sysname-match=open-volar-dvb[0-9]*",

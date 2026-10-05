@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+#[path="../../shared/uppercase.rs"] mod uppercase;
+pub use uppercase::upper;
 use std::sync::{atomic::{AtomicUsize,Ordering},OnceLock};
 
 pub const NAMES:[&str;4]=["English","Português (Brasil)","Español","Ελληνικά"];
@@ -40,11 +42,11 @@ pub fn translate(source:&str,lang:usize)->String{
         return format!("{}{}{}",&source[..leading],translate(trim,lang),
             &source[source.len()-trailing..]);
     }
-    let upper=source.chars().any(char::is_alphabetic)&&source==source.to_uppercase();
-    if upper {
+    let capitals=source.chars().any(char::is_alphabetic)&&source==source.to_uppercase();
+    if capitals {
         if let Some((_,value))=catalog().iter()
             .find(|(key,_)|key.to_uppercase()==source){
-            return value[lang].to_uppercase();
+            return upper(&value[lang]);
         }
     }
     for (key,value) in catalog(){
@@ -66,6 +68,14 @@ pub fn translate(source:&str,lang:usize)->String{
         assert_eq!(translate("Settings",3),"Ρυθμίσεις");
         assert_eq!(translate("LIVE",1),"AO VIVO");
         assert_eq!(translate("TV blocking",1),"Bloqueio de TV");
+    }
+    #[test]fn greek_capital_labels_carry_no_tonos(){
+        assert_eq!(translate("SETTINGS",3),"ΡΥΘΜΙΣΕΙΣ");
+        // Keys with their own all-caps entry (e.g. "PARENTAL") are translated as written.
+        for key in catalog().keys().filter(|k|!k.contains("{}")&&!catalog().contains_key(&k.to_uppercase())){
+            let capitals=translate(&key.to_uppercase(),3);
+            assert!(!capitals.chars().any(|c|"ΆΈΉΊΌΎΏάέήίόύώΐΰ".contains(c)),"{key}: {capitals}");
+        }
     }
 }
 
